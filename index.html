@@ -175,6 +175,14 @@ p{margin:0}
 .typein:focus{outline:3px solid var(--sun); outline-offset:2px}
 .hsent{font-size:clamp(1.25rem, 5vw, 1.6rem); font-weight:700; line-height:1.6; text-wrap:balance}
 mark{background:var(--sun); color:var(--on-sun); border-radius:4px; padding-inline:1px}
+/* Comprehension */
+.passage{text-align:left; background:var(--surface-2); border:1px solid var(--line); border-radius:14px; padding:14px 16px; display:flex; flex-direction:column; gap:10px; line-height:1.6}
+.passage h3{font-size:1.3rem}
+.passage p{border-radius:8px; transition:background .3s}
+.passage p.look{background:var(--syn-soft); box-shadow:0 0 0 6px var(--syn-soft)}
+.options.one{grid-template-columns:1fr}
+.options.one .opt{font-size:1.05rem}
+
 /* Maths */
 .mword{font-size:1.2rem; line-height:1.55; text-align:left; text-wrap:pretty}
 .meq{font-family:var(--f-display); font-size:clamp(1.6rem, 7vw, 2.4rem); letter-spacing:.03em; line-height:1.3}
@@ -274,7 +282,7 @@ mark{background:var(--sun); color:var(--on-sun); border-radius:4px; padding-inli
     </div>
 
     <div class="tabs" role="tablist">
-      <button class="tab" role="tab" id="tab-words" aria-controls="panel-words" aria-selected="true">Words</button>
+      <button class="tab" role="tab" id="tab-words" aria-controls="panel-words" aria-selected="true">English</button>
       <button class="tab" role="tab" id="tab-shapes" aria-controls="panel-shapes" aria-selected="false">Shapes</button>
       <button class="tab" role="tab" id="tab-maths" aria-controls="panel-maths" aria-selected="false">Maths</button>
     </div>
@@ -293,6 +301,7 @@ mark{background:var(--sun); color:var(--on-sun); border-radius:4px; padding-inli
           <label class="choice"><input type="radio" name="mode" id="mode-letters" value="letters"><b>Missing Letters</b><span>Fill in the gaps to spell a synonym or antonym.</span></label>
           <label class="choice"><input type="radio" name="mode" id="mode-oddwords" value="oddwords"><b>Odd Ones Out</b><span>Three words go together. Find the two that don't.</span></label>
           <label class="choice"><input type="radio" name="mode" id="mode-hidden" value="hidden"><b>Hidden Words</b><span>A four-letter word hides across two words in a sentence.</span></label>
+          <label class="choice"><input type="radio" name="mode" id="mode-comp" value="comp"><b>Comprehension</b><span>Read two short passages and answer questions about them.</span></label>
         </div>
         <span class="label" style="margin-top:6px">Pick a level</span>
         <div class="choices three" role="radiogroup">
@@ -388,7 +397,7 @@ const store = {
 };
 const ROUND = 10;
 const LEVEL_NAMES = {1:'Warm-up', 2:'Stretch', 3:'Brain-buster'};
-const MODE_NAMES = {match:'Magnet Match', pair:'Same or Opposite?', groups:'Pick a Pair', letters:'Missing Letters', oddwords:'Odd Ones Out', hidden:'Hidden Words', mmixed:'Mixed bag', seq:'Number sequences', calc:'Missing numbers', fdp:'Fractions & percentages', word:'Word problems', measure:'Shape & measure', mixed:'Mixed bag', series:'What comes next?', odd:'Odd one out', analogy:'Shape analogies', flip:'Flip & turn', codes:'Shape codes'};
+const MODE_NAMES = {match:'Magnet Match', pair:'Same or Opposite?', groups:'Pick a Pair', letters:'Missing Letters', oddwords:'Odd Ones Out', hidden:'Hidden Words', comp:'Comprehension', mmixed:'Mixed bag', seq:'Number sequences', calc:'Missing numbers', fdp:'Fractions & percentages', word:'Word problems', measure:'Shape & measure', mixed:'Mixed bag', series:'What comes next?', odd:'Odd one out', analogy:'Shape analogies', flip:'Flip & turn', codes:'Shape codes'};
 const CHEERS = ['Brilliant!', 'Spot on!', 'Yes!', 'Nailed it!', 'Superb!', 'Great thinking!'];
 
 /* ================= Words data ================= */
@@ -506,6 +515,199 @@ function hiddenAt(s, h){
   return at;
 }
 const HIDDEN = {};
+// Comprehension passages, written for this app. Paragraphs (or verses) are separated by a blank line.
+// Each question: [question, right answer, wrong, wrong, wrong, paragraph or verse to look at, why]
+const COMP = {
+1:[
+{title:'The Lost Kite', text:`On Saturday morning, Leo and his gran took his new red kite to Barrow Hill. The wind was so strong that the kite leapt into the sky as soon as Leo let go of it.
+
+For a while, everything was perfect. The kite danced above the trees and Leo laughed as the string tugged at his hands. Then a sudden gust snatched the string right out of his fingers.
+
+Leo watched in dismay as the kite floated away and landed at the top of an old oak tree. “It’s gone for ever,” he groaned.
+
+Gran smiled and pointed at a man walking towards them with a long ladder. “Not if Mr Patel can help,” she said. Ten minutes later, the kite was back in Leo’s hands, with only a tiny tear in one corner.`, qs:[
+['Where did Leo and his gran take the kite?', 'Barrow Hill', 'The park', 'The beach', 'The school field', 1, 'The first sentence says they “took his new red kite to Barrow Hill”.'],
+['What made Leo lose the kite?', 'A sudden gust of wind', 'He let go on purpose', 'The string snapped', 'Gran pulled the string', 2, '“A sudden gust snatched the string right out of his fingers.” The string did not snap, and Leo did not mean to let go.'],
+['What does “dismay” mean in paragraph 3?', 'Upset and worry', 'Excitement', 'Boredom', 'Surprise and delight', 3, 'Leo is watching his new kite float away and get stuck, so he feels upset and worried. The next thing he says is “It’s gone for ever.”'],
+['How did Leo feel when he said “It’s gone for ever”?', 'Hopeless', 'Proud', 'Relieved', 'Angry with Gran', 3, 'He thinks he will never get the kite back, and he “groaned”. That shows he has given up hope.'],
+['Which of these is true at the end of the story?', 'The kite had a tiny tear', 'The kite was badly broken', 'Mr Patel kept the kite', 'Gran climbed the ladder', 4, 'The kite was back “with only a tiny tear in one corner”.']
+]},
+{title:'Hedgehogs', text:`Hedgehogs are small mammals covered in thousands of sharp spines. When a hedgehog is frightened, it rolls into a tight ball so that only its spines are showing.
+
+Hedgehogs are nocturnal, which means they sleep during the day and come out at night. They snuffle through gardens and hedges looking for beetles, worms, slugs and caterpillars.
+
+In winter, food is hard to find, so hedgehogs hibernate. They build a nest of dry leaves and sleep until spring.
+
+You can help hedgehogs by leaving a small gap at the bottom of your garden fence so that they can travel between gardens. Never give them milk, because it makes them poorly. A shallow dish of water is much better.`, qs:[
+['What does a hedgehog do when it is frightened?', 'It rolls into a tight ball', 'It runs up a tree', 'It hides in a pond', 'It makes a loud noise', 1, '“When a hedgehog is frightened, it rolls into a tight ball.”'],
+['What does “nocturnal” mean?', 'Sleeping in the day and coming out at night', 'Eating only insects', 'Living in hedges', 'Sleeping all through the winter', 2, 'The passage explains it: “which means they sleep during the day and come out at night”. Sleeping all winter is hibernating, which is a different word.'],
+['Why do hedgehogs hibernate?', 'Food is hard to find in winter', 'They are frightened of people', 'Their spines fall out', 'Gardens are too noisy', 3, '“In winter, food is hard to find, so hedgehogs hibernate.”'],
+['What is the best drink to leave out for a hedgehog?', 'A shallow dish of water', 'A bowl of milk', 'Bread soaked in milk', 'Nothing, because hedgehogs never drink', 4, 'Milk makes hedgehogs poorly. “A shallow dish of water is much better.”'],
+['Why does the writer suggest leaving a gap under your fence?', 'So hedgehogs can travel between gardens', 'So hedgehogs can find milk', 'So hedgehogs can build nests', 'So cats cannot get in', 4, 'The gap is there “so that they can travel between gardens”.']
+]},
+{title:'The Snowman', poem:true, text:`We built him on a Monday
+when the snow lay soft and white,
+with pebbles for his buttons
+and a scarf wound round him tight.
+
+He stood guard by the gatepost
+all through the frosty dark,
+his carrot nose held proudly
+like a sentry in the park.
+
+But on Thursday came the sunshine,
+and he slowly shrank away,
+till all we found was Grandad’s scarf
+and a puddle where he lay.`, qs:[
+['On which day was the snowman built?', 'Monday', 'Tuesday', 'Thursday', 'Saturday', 1, '“We built him on a Monday.” Thursday is when the sunshine came.'],
+['What were the snowman’s buttons made of?', 'Pebbles', 'Coal', 'Carrots', 'Buttons from a coat', 1, '“With pebbles for his buttons.”'],
+['The snowman stood “like a sentry in the park”. What is a sentry?', 'A guard on duty', 'A lost child', 'A park keeper’s dog', 'A tall tree', 2, 'A sentry is a guard. The verse begins “He stood guard by the gatepost”, which gives you a clue.'],
+['Why did the snowman disappear?', 'The sunshine melted him', 'Someone knocked him over', 'The wind blew him away', 'Grandad took him inside', 3, '“On Thursday came the sunshine, and he slowly shrank away”: he melted.'],
+['What was left at the end?', 'Grandad’s scarf and a puddle', 'His hat and gloves', 'Nothing at all', 'A small pile of snow', 3, '“All we found was Grandad’s scarf and a puddle where he lay.”']
+]},
+{title:'My School Trip', text:`Dear Diary,
+
+Today our class went to the Natural History Museum in London. We set off at eight o’clock and the coach journey took two hours, so I read my comic and ate all my crisps before we even arrived!
+
+The best part was the dinosaur gallery. There was a skeleton so tall that I had to lean right back to see its head. Mrs Hill said it was longer than our classroom.
+
+After lunch we visited the gift shop. I bought a pencil shaped like a bone with my pocket money. Ruby bought a fossil, but she dropped it on the coach and it cracked in half.
+
+I was so tired on the way home that I fell asleep before we reached the motorway. I can’t wait to tell Mum all about it.`, qs:[
+['What time did the class set off?', 'Eight o’clock', 'Ten o’clock', 'Nine o’clock', 'After lunch', 2, '“We set off at eight o’clock.” They arrived two hours later, at ten.'],
+['Which part of the trip did the writer enjoy most?', 'The dinosaur gallery', 'The gift shop', 'The coach journey', 'Lunch', 3, '“The best part was the dinosaur gallery.”'],
+['Why did the writer have to “lean right back”?', 'The skeleton was very tall', 'The coach was moving', 'Mrs Hill asked them to', 'The ceiling was painted', 3, 'The skeleton was “so tall that I had to lean right back to see its head”.'],
+['What happened to Ruby’s fossil?', 'It cracked when she dropped it', 'She lost it in the museum', 'She swapped it for a pencil', 'She left it on the coach', 4, 'Ruby “dropped it on the coach and it cracked in half”.'],
+['What type of writing is this?', 'A diary entry', 'A newspaper report', 'A poem', 'A set of instructions', 1, 'It starts with “Dear Diary” and tells us about the writer’s own day.']
+]}
+],
+2:[
+{title:'The Lighthouse Keeper’s Daughter', text:`Every evening, as the sun sank into the sea, Mara climbed the hundred and twelve steps of the lighthouse to help her father light the great lamp. She knew every creak of the iron staircase and every crack in the whitewashed walls.
+
+One stormy night, her father lay in bed with a fever, his face as pale as candle wax. Outside, the waves hurled themselves against the rocks and the wind howled like a wolf around the tower.
+
+Mara hesitated at the bottom of the staircase. She had never lit the lamp alone. Then she thought of the fishing boats still out at sea, their crews depending on the light to guide them past the rocks. Gripping the rail, she began to climb.
+
+By the time the beam swept across the black water, her hands were trembling and her clothes were soaked with spray. But far out in the darkness, a tiny light blinked back at her, and then another. The boats were coming home.`, qs:[
+['Why did Mara have to light the lamp on her own?', 'Her father was ill', 'Her father was out fishing', 'She wanted to prove she was grown up', 'The lamp was broken', 2, 'Her father “lay in bed with a fever”.'],
+['“The wind howled like a wolf.” What kind of language is this?', 'A simile', 'A metaphor', 'A rhetorical question', 'A list of three', 2, 'It compares the wind to a wolf using the word “like”, so it is a simile.'],
+['What does “hesitated” mean in paragraph 3?', 'Paused because she was unsure', 'Ran up quickly', 'Fell over', 'Shouted for help', 3, 'She had never lit the lamp alone, so she paused before deciding what to do.'],
+['What made Mara decide to climb the stairs?', 'Thinking of the fishing crews who needed the light', 'Her father told her to', 'She heard a boat’s horn', 'She wanted to watch the storm', 3, 'She “thought of the fishing boats still out at sea, their crews depending on the light”. Then she began to climb.'],
+['What do the tiny lights at the end suggest?', 'The boats had seen the light and were coming home', 'Another storm was coming', 'Her father had woken up', 'The great lamp had gone out', 4, 'The lights “blinked back at her”, and “The boats were coming home.”']
+]},
+{title:'The Great Fire of London', text:`In the early hours of Sunday 2nd September 1666, a fire broke out in a bakery on Pudding Lane, in the City of London. The baker, Thomas Farriner, and his family escaped by climbing out of an upstairs window.
+
+The summer had been long and dry, and most houses were built of wood and packed closely together. A strong wind from the east carried the flames quickly from house to house.
+
+People tried to fight the fire with leather buckets of water, but it was hopeless. Eventually, houses were pulled down or blown up with gunpowder to make gaps, called firebreaks, that the flames could not cross.
+
+By Thursday, the fire was almost completely out. It had destroyed more than 13,000 houses and the old St Paul’s Cathedral, and around 70,000 people had lost their homes.
+
+Much of what we know comes from the diary of Samuel Pepys, who watched the fire and even buried his wine and his Parmesan cheese in the garden to keep them safe.`, qs:[
+['Where did the fire start?', 'In a bakery on Pudding Lane', 'In St Paul’s Cathedral', 'In Samuel Pepys’s house', 'In a cheese shop', 1, '“A fire broke out in a bakery on Pudding Lane.”'],
+['Which of these helped the fire to spread?', 'The dry summer and the wooden houses', 'The gunpowder', 'The leather buckets', 'Heavy rain', 2, '“The summer had been long and dry, and most houses were built of wood.” The gunpowder was used to stop the fire.'],
+['What is a “firebreak”?', 'A gap that the flames cannot cross', 'A tool for putting out fires', 'A rest for the firefighters', 'A brick wall around a house', 3, 'The passage explains: “gaps, called firebreaks, that the flames could not cross”.'],
+['How long did the fire last?', 'From Sunday to Thursday', 'One night', 'Two weeks', 'The whole summer', 4, 'It started on Sunday and “By Thursday, the fire was almost completely out.”'],
+['Why does the writer mention Samuel Pepys?', 'His diary tells us much of what we know about the fire', 'He started the fire', 'He was the baker', 'He put the fire out', 5, '“Much of what we know comes from the diary of Samuel Pepys.”']
+]},
+{title:'Save Our Library', text:`Dear Councillor Shaw,
+
+I am writing to ask you not to close Elmfield Library. I am ten years old and I have visited it every Saturday since I was four.
+
+The library is much more than a building full of books. It is where my grandad goes to use the computers, because he does not have one at home. It is where toddlers sing songs on Tuesday mornings, and where I did my homework when our internet stopped working for a whole week.
+
+Some people say that everyone reads on tablets now, so libraries are not needed. However, not every family can afford a tablet, and a screen cannot recommend a brilliant book the way Mrs Okafor, our librarian, can.
+
+Please visit on a Saturday morning and see how busy it is. I am sure you will change your mind.
+
+Yours sincerely,
+Ava Thompson`, qs:[
+['What is the main purpose of this letter?', 'To persuade the councillor to keep the library open', 'To complain about the librarian', 'To ask for a new tablet', 'To invite the councillor to a party', 2, '“I am writing to ask you not to close Elmfield Library.” The rest of the letter gives reasons to keep it.'],
+['Why does Ava’s grandad go to the library?', 'To use the computers', 'To sing songs', 'To borrow a tablet', 'To do his homework', 3, '“It is where my grandad goes to use the computers, because he does not have one at home.”'],
+['Ava gives an argument against libraries, then answers it. Which word begins her answer?', 'However', 'Please', 'Because', 'Since', 4, '“However, not every family can afford a tablet…” The word “However” turns the argument round.'],
+['What does Ava say a librarian can do that a screen cannot?', 'Recommend a brilliant book', 'Fix the internet', 'Teach songs to toddlers', 'Lend out computers', 4, '“A screen cannot recommend a brilliant book the way Mrs Okafor, our librarian, can.”'],
+['How does Ava end her letter?', 'By inviting the councillor to visit on a Saturday', 'By saying she will never visit again', 'By asking for money', 'By thanking Mrs Okafor', 5, '“Please visit on a Saturday morning and see how busy it is.”']
+]},
+{title:'Why Do Leaves Change Colour?', text:`Every autumn, the green leaves of trees such as oaks and maples turn yellow, orange and red before drifting to the ground. But where do these colours come from?
+
+Leaves are green because they contain chlorophyll, a substance that helps the tree make food from sunlight, water and air. Hidden underneath the green are yellow and orange colours that are there all summer long.
+
+As the days grow shorter and colder, the tree stops making chlorophyll. The green slowly fades, and the yellow and orange colours that were hidden appear at last. Some trees, such as maples, also make new red colours in the autumn.
+
+Eventually, the tree seals off each leaf where it joins the branch, and the leaf falls. Trees that lose their leaves in this way are called deciduous. Losing their leaves helps them to save water and energy through the winter.`, qs:[
+['Why are leaves green in summer?', 'They contain chlorophyll', 'They are full of water', 'They are still young', 'The sunlight shines on them', 2, '“Leaves are green because they contain chlorophyll.”'],
+['Where do the yellow and orange colours come from?', 'They were hidden under the green all summer', 'The tree makes them in the autumn', 'Frost paints them on', 'They come from the soil', 2, '“Hidden underneath the green are yellow and orange colours that are there all summer long.” Only the red is new in autumn.'],
+['What makes the tree stop making chlorophyll?', 'The days getting shorter and colder', 'Heavy rain', 'The leaves falling off', 'Too much sunlight', 3, '“As the days grow shorter and colder, the tree stops making chlorophyll.”'],
+['What does “deciduous” mean?', 'Losing its leaves each year', 'Staying green all year', 'Having red leaves', 'Growing near water', 4, '“Trees that lose their leaves in this way are called deciduous.”'],
+['Which of these sentences is TRUE?', 'Maples can make new red colours in autumn', 'All trees turn red in autumn', 'Chlorophyll is orange', 'Leaves fall off in the middle of summer', 3, '“Some trees, such as maples, also make new red colours in the autumn.”']
+]}
+],
+3:[
+{title:'The Clockmaker’s Apprentice', text:`The shop on Fennick Street had not changed in forty years. Its window was crowded with clocks of every shape: tall grandfather clocks, squat carriage clocks, cuckoo clocks with doors that never quite closed. Inside, the ticking was so constant that Isaac had stopped hearing it on his second day.
+
+Mr Hartley, the clockmaker, was a man of few words. He spoke mostly in grunts, with the occasional raised eyebrow when Isaac dropped a screw onto the floorboards, where it would vanish for ever between the cracks.
+
+For six months, Isaac was trusted with nothing more delicate than a broom. Then, one wet Tuesday, Mr Hartley placed a tiny pocket watch on the workbench in front of him. Its glass was cracked and its hands had frozen at a quarter past three.
+
+“It was my father’s,” the old man said quietly. It was the longest sentence Isaac had ever heard him speak.
+
+Isaac worked on the watch for three evenings, holding his breath each time the tweezers closed around a cog no bigger than a grain of rice. When at last the second hand shivered and began to move, he looked up to find Mr Hartley watching from the doorway. The clockmaker said nothing, but for the first time, Isaac thought he saw him smile.`, qs:[
+['Why had Isaac “stopped hearing” the ticking?', 'He had got used to the constant sound', 'The clocks had stopped', 'He was wearing earmuffs', 'Mr Hartley had turned them off', 1, 'The ticking was “so constant” that by his second day he no longer noticed it. He had got used to it.'],
+['What does “a man of few words” tell us about Mr Hartley?', 'He did not talk much', 'He could not read', 'He was cruel to Isaac', 'He spoke another language', 2, 'He “spoke mostly in grunts”, and later one short sentence is “the longest sentence Isaac had ever heard him speak”.'],
+['What does “trusted with nothing more delicate than a broom” suggest?', 'Isaac had only been given simple jobs like sweeping', 'Isaac kept breaking brooms', 'Isaac was in charge of the shop', 'Isaac did not want to mend clocks', 3, 'For six months Isaac was only allowed to sweep, not to handle anything delicate like a clock.'],
+['Why does it matter that the watch had belonged to Mr Hartley’s father?', 'It shows Mr Hartley was trusting Isaac with something precious', 'It was the most expensive watch in the shop', 'It meant the watch could never be mended', 'Isaac’s father wanted it back', 4, 'After six months of sweeping, Isaac is suddenly given something of great personal value. That shows trust.'],
+['How does Mr Hartley most likely feel at the end?', 'Quietly pleased with Isaac', 'Angry that the watch was opened', 'Bored', 'Worried that Isaac will leave', 5, 'He watches from the doorway and Isaac “thought he saw him smile”, for the first time.']
+]},
+{title:'The Arctic Tern', text:`Few creatures can match the remarkable journey of the Arctic tern. Weighing about the same as a small apple, this slender seabird flies from its breeding grounds in the Arctic to the edge of Antarctica and back again every year.
+
+Scientists who fixed tiny tracking devices to terns discovered that some travel more than 70,000 kilometres a year: the longest migration of any animal. Because terns zig-zag to follow helpful winds rather than flying in a straight line, the journey is far longer than the distance between the poles.
+
+Why travel so far? By moving between the two ends of the Earth, the tern enjoys two summers each year and, it is thought, sees more daylight than any other creature. Long hours of light mean long hours for hunting the small fish that it catches by diving into the sea.
+
+Arctic terns can live for more than thirty years. Over a lifetime, one bird may fly a distance equal to travelling to the Moon and back about three times.`, qs:[
+['Where do Arctic terns breed?', 'In the Arctic', 'In Antarctica', 'In the tropics', 'On ships at sea', 1, 'The tern flies “from its breeding grounds in the Arctic” to Antarctica and back.'],
+['Why is the tern’s journey much longer than the distance between the poles?', 'It zig-zags to follow helpful winds', 'It stops to rest on ships', 'It often gets lost', 'It flies round the Moon', 2, '“Because terns zig-zag to follow helpful winds rather than flying in a straight line, the journey is far longer.”'],
+['What does “slender” mean in paragraph 1?', 'Thin and graceful', 'Very heavy', 'Brightly coloured', 'Noisy', 1, 'Slender means thin. The tern weighs only about as much as a small apple.'],
+['According to the passage, how does extra daylight help the tern?', 'It gives the tern more time to hunt for food', 'It keeps the tern warm', 'It lets the tern sleep for longer', 'It helps the tern see the Moon', 3, '“Long hours of light mean long hours for hunting the small fish.”'],
+['Which statement is NOT supported by the passage?', 'Arctic terns spend the winter asleep in the Arctic', 'Arctic terns can live for more than thirty years', 'Scientists used tracking devices to study terns', 'Arctic terns eat small fish', 3, 'The passage says terns travel to Antarctica and enjoy “two summers each year”. Nothing says they sleep through winter in the Arctic. All the other statements are in the passage.']
+]},
+{title:'Tide', poem:true, text:`The sea comes in like a patient thief,
+creeping over the sand and reef;
+it steals the castle we built by noon
+and the shells we left for the rising moon.
+
+It doesn’t hurry, it doesn’t shout,
+it simply waits till we’ve all gone out,
+then fills each hollow and smooths each mark
+and hums to itself in the gathering dark.
+
+By morning the beach is scrubbed and new,
+a page wiped clean for me and you,
+and only the gulls, with their knowing cries,
+remember the castle, and where it lies.`, qs:[
+['The sea is compared to a thief. What does it “steal”?', 'The sandcastle and the shells', 'The gulls', 'The moon', 'The children’s buckets', 1, '“It steals the castle we built by noon and the shells we left for the rising moon.”'],
+['“It doesn’t hurry, it doesn’t shout.” Which technique is the poet using here?', 'Personification', 'A simile', 'Onomatopoeia', 'Alliteration', 2, 'Hurrying and shouting are things people do. Giving human actions to something that is not human is personification.'],
+['What does “a page wiped clean” suggest about the beach in the morning?', 'It is smooth and fresh, ready to be used again', 'It is covered in paper', 'It is dirty', 'It has disappeared under the sea', 3, 'The tide has smoothed every mark away, like a clean page waiting to be written on.'],
+['Which phrase best describes how the sea moves in the poem?', 'Slowly and quietly', 'Wildly and angrily', 'Quickly and noisily', 'It does not move at all', 2, 'It is “patient”, “creeping”, “doesn’t hurry” and “doesn’t shout”.'],
+['Why might the gulls be called “knowing”?', 'They seem to remember what used to be there', 'They are hungry for fish', 'They can talk to the children', 'They built the castle', 3, 'The gulls are the only ones that “remember the castle, and where it lies”.']
+]},
+{title:'Should Children Have Homework?', text:`Few school topics spark as much debate as homework. Some parents believe it is essential; others think it spoils family time. So who is right?
+
+Supporters argue that homework helps children to practise what they have learned, so that new skills become secure. It can also build good habits, such as organising time and working independently, which will be vital at secondary school.
+
+Critics, however, point out that after a long day at school, children need time to play, rest and pursue hobbies. They also argue that homework can be unfair, because not every child has a quiet place to work or an adult who can help.
+
+Perhaps the answer lies somewhere in between. Short, purposeful tasks, such as reading for twenty minutes or learning times tables, may offer the benefits without the drawbacks. What matters most, many teachers agree, is not how much homework is set, but whether it is worth doing.`, qs:[
+['What kind of writing is this?', 'A balanced argument', 'A persuasive letter', 'A newspaper report', 'A one-sided argument for homework', 1, 'It gives both sides (what supporters say and what critics say) before reaching a conclusion.'],
+['According to supporters, how can homework help with secondary school?', 'It builds habits such as organising time', 'It makes children more popular', 'It means there is less work at secondary school', 'It replaces lessons', 2, 'Homework can “build good habits, such as organising time and working independently, which will be vital at secondary school”.'],
+['Why do critics say homework can be unfair?', 'Not every child has a quiet place to work or an adult to help', 'Teachers set too much maths', 'Teachers mark it too harshly', 'It is only set for older children', 3, '“Not every child has a quiet place to work or an adult who can help.”'],
+['What does “pursue” mean in “pursue hobbies”?', 'Spend time doing', 'Chase after quickly', 'Give up', 'Buy', 3, 'Here, to pursue a hobby means to spend time doing it. Pursue can also mean to chase after something, but that does not fit this sentence.'],
+['What is the writer’s conclusion?', 'Short tasks that are worth doing may be best', 'Homework should be banned', 'Children need much more homework', 'Parents should do the homework', 4, '“Short, purposeful tasks… may offer the benefits without the drawbacks.”']
+]}
+]
+};
+const paras = p => p.text.split(/\n\s*\n/);
+
 for (const k in HIDDEN_RAW) HIDDEN[k] = HIDDEN_RAW[k].trim().split('\n').map(l => { const [s, h] = l.split('|'); return {s, h, at: hiddenAt(s, h)[0]}; });
 
 /* ================= Saved progress ================= */
@@ -1228,6 +1430,10 @@ function makeOddOut(e){
 }
 
 function makeWordQuestions(m, l){
+  if (m === 'comp') return shuffle(COMP[l]).slice(0, 2).flatMap((p, pi) => p.qs.map((x, qi) => {
+    const opts = shuffle(x.slice(1, 5));
+    return {kind:'comp', p, pi, qi, q:x[0], opts, correct:opts.indexOf(x[1]), look:x[5], why:x[6]};
+  }));
   if (m === 'hidden') return shuffle(HIDDEN[l]).slice(0, ROUND).map(h => ({h, kind:'hidden'}));
   const words = WORDS[l];
   const pool = m === 'oddwords' ? words.filter(e => e.syn.length >= 2 && e.ant.length >= 2)
@@ -1262,6 +1468,7 @@ $('tab-maths').addEventListener('click', () => setTab('maths'));
 function showBest(){
   const [m, l, el] = [val(PICKS[tab][0]), val(PICKS[tab][1]), 'best-' + tab];
   const b = store.get(bestKey(m, l));
+  if (tab === 'words') $('play-words').textContent = m === 'comp' ? 'Read 2 passages' : 'Play 10 words';
   $(el).textContent = b != null ? `Best for ${MODE_NAMES[m]}, ${LEVEL_NAMES[l]}: ${b} points` : `No score yet for ${MODE_NAMES[m]}, ${LEVEL_NAMES[l]}. Have a go!`;
 }
 document.querySelectorAll('input[type=radio]').forEach(i => i.addEventListener('change', showBest));
@@ -1316,7 +1523,7 @@ function start(subject){
 }
 function showGame(){
   $('start').hidden = true; $('end').hidden = true; $('game').hidden = false;
-  $('qlabel').textContent = {words:'Word', shapes:'Puzzle', maths:'Question'}[S.subject];
+  $('qlabel').textContent = S.mode === 'comp' ? 'Question' : {words:'Word', shapes:'Puzzle', maths:'Question'}[S.subject];
   render();
   window.scrollTo({top:0});
 }
@@ -1430,6 +1637,17 @@ function render(){
       <div class="toolbar"><button class="hint" id="hintBtn" type="button">Show me it in a sentence (half points)</button></div>
       <div id="fb"></div>`;
     wireTyping(n, answerLetters);
+  } else if (S.mode === 'comp'){
+    const p = q.p, unit = p.poem ? 'verse' : 'paragraph';
+    c.innerHTML = `
+      <span class="chip mix">Passage ${q.pi+1} of 2 · Question ${q.qi+1} of ${p.qs.length}</span>
+      <article class="passage" aria-label="${esc(p.title)}"><h3>${esc(p.title)}</h3>${paras(p).map((t,k) =>
+        `<p data-k="${k+1}">${p.poem ? t.split('\n').map(esc).join('<br>') : esc(t).replace(/\n/g, '<br>')}</p>`).join('')}</article>
+      <p class="ask"><b>${esc(q.q)}</b></p>
+      <div class="options one">${q.opts.map((o,k) => `<button class="opt" data-i="${k}"><span class="k">${k+1}</span><span class="w">${esc(o)}</span></button>`).join('')}</div>
+      <div class="toolbar"><button class="hint" id="hintBtn">Show me which ${unit} to read (half points)</button></div>
+      <div id="fb"></div>`;
+    c.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => answerComp(+b.dataset.i)));
   } else if (S.mode === 'hidden'){
     const n = q.h.h.length;
     c.innerHTML = `
@@ -1491,6 +1709,14 @@ function hiddenHTML(h){
   }).join(' ');
 }
 
+// Highlight the paragraph or verse that holds the answer
+function lookHere(q){
+  const el = $('qcard').querySelector(`.passage p[data-k="${q.look}"]`);
+  el.classList.add('look');
+  el.scrollIntoView({block:'nearest', behavior:'smooth'});
+  return `<div class="feedback info"><p><b>Clue:</b> read ${q.p.poem ? 'verse' : 'paragraph'} ${q.look} again. It is highlighted.</p></div>`;
+}
+
 function useHint(){
   if (S.answered) return;
   S.hint = true;
@@ -1498,6 +1724,7 @@ function useHint(){
   const q = S.qs[S.i];
   $('fb').innerHTML = S.subject!=='words'
     ? `<div class="feedback info"><p><b>Clue:</b> ${q.hint}</p></div>`
+    : q.p ? lookHere(q)
     : q.h ? `<div class="feedback info"><p><b>Clue:</b> it starts in the word <b>${esc(q.h.s.split(' ')[q.h.at.i])}</b>.</p></div>`
     : `<div class="feedback info"><p class="sentence">${sentenceHTML(q.e)}</p></div>`;
 }
@@ -1525,7 +1752,7 @@ function record(ok){
 function showFeedback(ok, head, body){
   const last = S.i === ROUND - 1;
   $('fb').innerHTML = `<div class="feedback ${ok ? 'good' : 'bad'}"><p class="head">${head}</p>${body}</div>
-    <button class="btn wide" id="next" style="margin-top:12px">${last ? 'See my score' : {words:'Next word', shapes:'Next puzzle', maths:'Next question'}[S.subject]}</button>`;
+    <button class="btn wide" id="next" style="margin-top:12px">${last ? 'See my score' : (S.mode === 'comp' ? 'Next question' : {words:'Next word', shapes:'Next puzzle', maths:'Next question'}[S.subject])}</button>`;
   $('next').addEventListener('click', next);
   $('next').focus({preventScroll:true});
   $('next').scrollIntoView({block:'nearest', behavior:'smooth'});
@@ -1634,6 +1861,18 @@ function answerShape(i){
   showFeedback(ok, ok ? pick(CHEERS) : `Not quite. It was ${'abcde'[q.correct]}.`, `<p>${q.explain}</p>`);
 }
 
+function answerComp(i){
+  if (S.answered) return;
+  const q = S.qs[S.i], ok = i === q.correct;
+  record(ok);
+  $('qcard').querySelectorAll('.opt').forEach((b,k) => {
+    b.disabled = true;
+    b.classList.add(k === q.correct ? 'right' : k === i ? 'wrong' : 'fade');
+  });
+  $('qcard').querySelector(`.passage p[data-k="${q.look}"]`).classList.add('look');
+  showFeedback(ok, ok ? pick(CHEERS) : 'Not quite', `<p>${ok ? '' : `The answer was <b>${esc(q.opts[q.correct])}</b>. `}${esc(q.why)}</p>`);
+}
+
 function answerHidden(){
   if (S.answered) return;
   const q = S.qs[S.i], h = q.h, typed = $('typein').value, ok = typed === h.h;
@@ -1651,7 +1890,9 @@ function next(){
   if (S.i >= ROUND) return finish();
   P.current = S; saveP();
   render();
-  window.scrollTo({top:0, behavior:'smooth'});
+  const q = S.qs[S.i];
+  if (q.p && q.qi > 0) $('qcard').querySelector('.ask').scrollIntoView({block:'center', behavior:'smooth'});   // same passage: go straight to the new question
+  else window.scrollTo({top:0, behavior:'smooth'});
 }
 
 const TYPE_TIPS = {
@@ -1682,6 +1923,9 @@ function finish(){
     const missedH = S.qs.filter((q,k) => S.results[k] === false && q.h).map(q => q.h);
     if (missedH.length) review = `<div class="review"><span class="label">Sentences to look at again</span>${missedH.map(h => `
       <div class="rv one"><span class="hw">${esc(h.h)}</span><span class="sentence">${hiddenHTML(h)}</span></div>`).join('')}</div>`;
+    const missedC = S.qs.filter((q,k) => S.results[k] === false && q.p);
+    if (missedC.length) review = `<div class="review"><span class="label">Questions to look at again</span>${missedC.map(q => `
+      <div class="rv one"><span>${esc(q.q)}</span><span><b>${esc(q.opts[q.correct])}</b></span><span class="tip">${esc(q.p.title)}: ${esc(q.why)}</span></div>`).join('')}</div>`;
     const missed = S.qs.filter((q,k) => S.results[k] === false && q.e).map(q => q.e);
     if (missed.length) review = `<div class="review"><span class="label">Words to practise</span>${missed.map(e => `
       <div class="rv"><span class="hw">${esc(e.w)}</span><span><span class="s">Same:</span> ${e.syn.map(esc).join(', ')}</span><span><span class="a">Opposite:</span> ${e.ant.map(esc).join(', ')}</span></div>`).join('')}</div>`;
@@ -1718,7 +1962,7 @@ document.addEventListener('keydown', ev => {
   if (S.subject !== 'words'){
     const i = '12345'.includes(k) && k.length===1 ? +k-1 : 'abcde'.indexOf(k);
     if (i >= 0 && k.length===1){ const b = $('qcard').querySelectorAll('.sopt')[i]; if (b) b.click(); }
-  } else if (S.mode === 'match' && /^[1-4]$/.test(k)){
+  } else if ((S.mode === 'match' || S.mode === 'comp') && /^[1-4]$/.test(k)){
     const b = $('qcard').querySelectorAll('.opt')[+k - 1];
     if (b) b.click();
   } else if (S.mode === 'pair'){

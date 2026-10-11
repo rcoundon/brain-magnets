@@ -4,7 +4,7 @@ Static PWA, no build step, no dependencies. Everything lives in `index.html` (CS
 
 ## Structure of index.html
 - CSS tokens on `:root`, with dark mode under `prefers-color-scheme` and `[data-theme]`. Use tokens, never literal colours.
-- Words data: the `RAW` object, one line per word: `word|synonyms|antonyms|example sentence`, keyed by level 1–3.
+- Words data: the `RAW` object, one line per word: `word|synonyms|antonyms|example sentence`, keyed by level 1–3. Comprehension passages live in `COMP` (each question: `[question, right, wrong×3, paragraph to look at, why]`).
 - Shape puzzles: `genSeries`, `genOdd`, `genAnalogy`, `genFlip`, `genCodes`. Each returns `{type, prompt, stem, opts, correct, explain, hint}` with options as SVG/HTML strings.
   - Figures are drawn by `figF` (main shape, inner shape, dots, corner square) and `figG` (lopsided shapes for flips/turns, transformed by the matrices in `M`).
   - Generators must guarantee exactly one correct answer and five distinct options.
