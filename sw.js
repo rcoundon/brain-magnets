@@ -1,5 +1,5 @@
 // Brain Magnets offline support. Bump VERSION when you change any file.
-const VERSION = 'wm-v4';
+const VERSION = 'wm-v5';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'icons/favicon-32.png'];
 
 self.addEventListener('install', e => {

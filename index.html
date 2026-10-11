@@ -59,11 +59,13 @@ h1,h2,h3{font-family:var(--f-display); font-weight:400; margin:0; text-wrap:bala
 p{margin:0}
 
 /* Fridge-magnet title */
-.title{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; padding-block:6px}
-.title .gap{width:14px}
-.tile{font-family:var(--f-display); display:inline-grid; place-items:center; min-width:2.1em; height:2.3em; padding-inline:.25em; border-radius:10px; font-size:clamp(1.25rem, 5.6vw, 2.1rem); color:var(--on-accent); box-shadow:var(--shadow); transform:rotate(var(--r,0deg)); transition:transform .25s}
+/* Each word stays on one line; the title only wraps between BRAIN and MAGNETS */
+.title{display:flex; flex-wrap:wrap; gap:10px 20px; justify-content:center; padding-block:6px}
+.title .tw{display:flex; gap:6px}
+.tile{font-family:var(--f-display); display:inline-grid; place-items:center; min-width:2.1em; height:2.3em; padding-inline:.25em; border-radius:10px; font-size:clamp(1rem, 5vw, 2.1rem); color:var(--on-accent); box-shadow:var(--shadow); transform:rotate(var(--r,0deg)); transition:transform .25s}
 .tile:hover{transform:rotate(0) translateY(-3px)}
 .t-red{background:var(--ant)} .t-blue{background:var(--syn)} .t-sun{background:var(--sun); color:var(--on-sun)} .t-leaf{background:var(--leaf)}
+.title.small{gap:6px}
 .title.small .tile{font-size:1rem; height:2em; min-width:1.8em; border-radius:7px}
 .tagline{text-align:center; color:var(--muted); font-size:1.1rem}
 
@@ -250,9 +252,8 @@ mark{background:var(--sun); color:var(--on-sun); border-radius:4px; padding-inli
 <div class="app" id="app">
   <section id="start" class="section" style="gap:20px">
     <div class="title" aria-label="Brain Magnets">
-      <span class="tile t-red" style="--r:-4deg">B</span><span class="tile t-sun" style="--r:3deg">R</span><span class="tile t-blue" style="--r:-2deg">A</span><span class="tile t-leaf" style="--r:5deg">I</span><span class="tile t-red" style="--r:-3deg">N</span>
-      <span class="gap"></span>
-      <span class="tile t-blue" style="--r:4deg">M</span><span class="tile t-red" style="--r:-3deg">A</span><span class="tile t-leaf" style="--r:2deg">G</span><span class="tile t-sun" style="--r:-5deg">N</span><span class="tile t-red" style="--r:3deg">E</span><span class="tile t-blue" style="--r:-2deg">T</span><span class="tile t-sun" style="--r:4deg">S</span>
+      <span class="tw"><span class="tile t-red" style="--r:-4deg">B</span><span class="tile t-sun" style="--r:3deg">R</span><span class="tile t-blue" style="--r:-2deg">A</span><span class="tile t-leaf" style="--r:5deg">I</span><span class="tile t-red" style="--r:-3deg">N</span></span>
+      <span class="tw"><span class="tile t-blue" style="--r:4deg">M</span><span class="tile t-red" style="--r:-3deg">A</span><span class="tile t-leaf" style="--r:2deg">G</span><span class="tile t-sun" style="--r:-5deg">N</span><span class="tile t-red" style="--r:3deg">E</span><span class="tile t-blue" style="--r:-2deg">T</span><span class="tile t-sun" style="--r:4deg">S</span></span>
     </div>
     <p class="tagline">Word puzzles and shape puzzles to stretch your brain.</p>
 
