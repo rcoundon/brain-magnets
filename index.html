@@ -73,7 +73,7 @@ p{margin:0}
 .label{font-size:.78rem; letter-spacing:.09em; text-transform:uppercase; font-weight:700; color:var(--muted)}
 
 /* Subject tabs */
-.tabs{display:grid; grid-template-columns:1fr 1fr; gap:6px; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:6px}
+.tabs{display:grid; grid-template-columns:repeat(3,1fr); gap:6px; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:6px}
 .tab{border:none; background:none; border-radius:11px; padding:10px; font-family:var(--f-display); font-size:1.3rem; color:var(--muted)}
 .tab[aria-selected="true"]{background:var(--ink); color:var(--bg)}
 .panel{display:flex; flex-direction:column; gap:20px}
@@ -112,7 +112,7 @@ p{margin:0}
 .row > *{flex:1 1 10rem}
 
 /* Progress */
-.progress{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; text-align:center}
+.progress{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; text-align:center}
 .pstat{background:var(--surface-2); border-radius:12px; padding:10px 6px; display:flex; flex-direction:column; gap:2px; min-width:0}
 .pstat b{font-family:var(--f-display); font-weight:400; font-size:1.9rem; line-height:1.1; font-variant-numeric:tabular-nums}
 .pstat b small{font-size:.55em; color:var(--muted)}
@@ -175,6 +175,14 @@ p{margin:0}
 .typein:focus{outline:3px solid var(--sun); outline-offset:2px}
 .hsent{font-size:clamp(1.25rem, 5vw, 1.6rem); font-weight:700; line-height:1.6; text-wrap:balance}
 mark{background:var(--sun); color:var(--on-sun); border-radius:4px; padding-inline:1px}
+/* Maths */
+.mword{font-size:1.2rem; line-height:1.55; text-align:left; text-wrap:pretty}
+.meq{font-family:var(--f-display); font-size:clamp(1.6rem, 7vw, 2.4rem); letter-spacing:.03em; line-height:1.3}
+.mnote{color:var(--muted)}
+.box{display:inline-grid; place-items:center; min-width:1.5em; height:1.3em; border:3px dashed var(--muted); border-radius:8px; color:var(--muted); vertical-align:middle}
+.frac{white-space:nowrap; font-size:1.2em} .frac sup, .frac sub{font-size:.7em}
+.sopts.text .sopt{justify-content:center; padding:12px 6px; min-height:4.2rem}
+.mopt{font-weight:700; font-size:1.15rem; overflow-wrap:anywhere}
 .typein::placeholder{letter-spacing:normal; color:var(--muted)}
 
 /* Shape puzzles */
@@ -228,6 +236,7 @@ mark{background:var(--sun); color:var(--on-sun); border-radius:4px; padding-inli
 
 @media (max-width:480px){
   .progress{grid-template-columns:repeat(2,1fr)}
+  .pstat:nth-child(5){grid-column:1/-1}
   .explain{grid-template-columns:1fr}
   .choices.three, .choices.two.stack{grid-template-columns:1fr}
   .options{grid-template-columns:1fr}
@@ -267,6 +276,7 @@ mark{background:var(--sun); color:var(--on-sun); border-radius:4px; padding-inli
     <div class="tabs" role="tablist">
       <button class="tab" role="tab" id="tab-words" aria-controls="panel-words" aria-selected="true">Words</button>
       <button class="tab" role="tab" id="tab-shapes" aria-controls="panel-shapes" aria-selected="false">Shapes</button>
+      <button class="tab" role="tab" id="tab-maths" aria-controls="panel-maths" aria-selected="false">Maths</button>
     </div>
 
     <div class="panel" id="panel-words" role="tabpanel" aria-labelledby="tab-words">
@@ -320,6 +330,31 @@ mark{background:var(--sun); color:var(--on-sun); border-radius:4px; padding-inli
         <button class="btn wide" id="play-shapes">Play 10 puzzles</button>
       </div>
     </div>
+
+    <div class="panel" id="panel-maths" role="tabpanel" aria-labelledby="tab-maths" hidden>
+      <div class="ex plain">
+        <p><b>11+ maths</b> questions, with five answers to choose from like the real test. Do your working on paper. The wrong answers are the mistakes people often make, so check before you pick!</p>
+      </div>
+      <div class="card section">
+        <span class="label">Pick a topic</span>
+        <div class="choices two stack" role="radiogroup">
+          <label class="choice"><input type="radio" name="mmode" id="mm-mixed" value="mmixed" checked><b>Mixed bag</b><span>A bit of everything, like a real test.</span></label>
+          <label class="choice"><input type="radio" name="mmode" id="mm-seq" value="seq"><b>Number sequences</b><span>Find the next number in the pattern.</span></label>
+          <label class="choice"><input type="radio" name="mmode" id="mm-calc" value="calc"><b>Missing numbers</b><span>Work out the number in the box.</span></label>
+          <label class="choice"><input type="radio" name="mmode" id="mm-fdp" value="fdp"><b>Fractions &amp; percentages</b><span>Fractions, decimals and percentages.</span></label>
+          <label class="choice"><input type="radio" name="mmode" id="mm-word" value="word"><b>Word problems</b><span>Money, time, sharing and more.</span></label>
+          <label class="choice"><input type="radio" name="mmode" id="mm-measure" value="measure"><b>Shape &amp; measure</b><span>Perimeter, area, angles and units.</span></label>
+        </div>
+        <span class="label" style="margin-top:6px">Pick a level</span>
+        <div class="choices three" role="radiogroup">
+          <label class="choice"><input type="radio" name="mlevel" id="mlv-1" value="1" checked><b>Warm-up</b><span>One step</span></label>
+          <label class="choice"><input type="radio" name="mlevel" id="mlv-2" value="2"><b>Stretch</b><span>Two steps</span></label>
+          <label class="choice"><input type="radio" name="mlevel" id="mlv-3" value="3"><b>Brain-buster</b><span>Trickier, several steps</span></label>
+        </div>
+        <p class="best" id="best-maths"></p>
+        <button class="btn wide" id="play-maths">Play 10 questions</button>
+      </div>
+    </div>
   </section>
 
   <section id="game" class="section" hidden>
@@ -353,7 +388,7 @@ const store = {
 };
 const ROUND = 10;
 const LEVEL_NAMES = {1:'Warm-up', 2:'Stretch', 3:'Brain-buster'};
-const MODE_NAMES = {match:'Magnet Match', pair:'Same or Opposite?', groups:'Pick a Pair', letters:'Missing Letters', oddwords:'Odd Ones Out', hidden:'Hidden Words', mixed:'Mixed bag', series:'What comes next?', odd:'Odd one out', analogy:'Shape analogies', flip:'Flip & turn', codes:'Shape codes'};
+const MODE_NAMES = {match:'Magnet Match', pair:'Same or Opposite?', groups:'Pick a Pair', letters:'Missing Letters', oddwords:'Odd Ones Out', hidden:'Hidden Words', mmixed:'Mixed bag', seq:'Number sequences', calc:'Missing numbers', fdp:'Fractions & percentages', word:'Word problems', measure:'Shape & measure', mixed:'Mixed bag', series:'What comes next?', odd:'Odd one out', analogy:'Shape analogies', flip:'Flip & turn', codes:'Shape codes'};
 const CHEERS = ['Brilliant!', 'Spot on!', 'Yes!', 'Nailed it!', 'Superb!', 'Great thinking!'];
 
 /* ================= Words data ================= */
@@ -475,7 +510,7 @@ for (const k in HIDDEN_RAW) HIDDEN[k] = HIDDEN_RAW[k].trim().split('\n').map(l =
 
 /* ================= Saved progress ================= */
 const PKEY = 'wm-progress';
-const newP = () => ({day:{last:null, streak:0, best:0}, rounds:0, answered:0, correct:0, run:0, bestRun:0, words:{}, shapes:{tried:0, solved:0}, current:null});
+const newP = () => ({day:{last:null, streak:0, best:0}, rounds:0, answered:0, correct:0, run:0, bestRun:0, words:{}, shapes:{tried:0, solved:0}, maths:{tried:0, solved:0}, current:null});
 let P = Object.assign(newP(), store.get(PKEY) || {});
 const saveP = () => store.set(PKEY, P);
 const dateStr = d => d.toLocaleDateString('en-CA');
@@ -887,6 +922,260 @@ function makeShapeQuestions(mode, lv){
   return types.map(t => GEN[t](+lv));
 }
 
+/* ================= Maths questions ================= */
+// Every answer is worked out from the numbers picked, never typed in by hand. Wrong options come from
+// common slips (adding before multiplying, area for perimeter, treating time as decimals, …).
+const NAMES = ['Amir','Bella','Chloe','Dev','Ella','Finn','Grace','Harry','Isla','Jack','Kai','Lily','Max','Noah','Olivia','Priya','Ruby','Sam','Theo','Zara'];
+const ri = (lo, hi) => lo + rnd(hi - lo + 1);   // whole number from lo to hi
+const gcd = (a, b) => b ? gcd(b, a % b) : a;
+const num = n => (n < 0 ? '−' : '') + Math.abs(n).toLocaleString('en-GB');
+const money = p => p < 100 ? `${p}p` : `£${Math.floor(p/100)}.${String(p%100).padStart(2,'0')}`;
+const clock = m => { const h = Math.floor(m/60) % 24; return `${(h+11)%12+1}:${String(m%60).padStart(2,'0')} ${h<12 ? 'am' : 'pm'}`; };
+const clock24 = m => { m = ((m % 1440) + 1440) % 1440; return `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`; };
+const dur = m => [Math.floor(m/60) && `${Math.floor(m/60)} hour${m>=120?'s':''}`, m%60 && `${m%60} minute${m%60>1?'s':''}`].filter(Boolean).join(' ');
+const frac = (a, b) => `<span class="frac"><sup>${a}</sup>&frasl;<sub>${b}</sub></span>`;
+const dec = th => `${Math.floor(th/1000)}.${String(th%1000).padStart(3,'0')}`.replace(/0+$/, '').replace(/\.$/, '');   // thousandths as a decimal
+const cm = x => `${num(x)} cm`, cm2 = x => `${num(x)} cm²`, cm3 = x => `${num(x)} cm³`, deg = x => `${x}°`, same = x => x;
+const BOX = '<span class="box" aria-label="missing number">?</span>';
+const eqn = s => `<p class="meq">${s}</p>`;
+
+// Five options: the answer plus the first four wrong ones that look different from it and each other
+function mathsOpts(ans, wrongs, fmt = num){
+  const a = fmt(ans), seen = new Set([a]), out = [];
+  for (const w of wrongs){
+    if (out.length === 4) break;
+    if (w == null || w === false) continue;
+    if (typeof w === 'number' && (!Number.isFinite(w) || (w < 0 && ans >= 0) || (Number.isInteger(ans) && !Number.isInteger(w)))) continue;
+    const h = fmt(w);
+    if (!seen.has(h)){ seen.add(h); out.push(h); }
+  }
+  return out.length === 4 ? finishOpts(`<span class="mopt">${a}</span>`, out.map(h => `<span class="mopt">${h}</span>`)) : null;
+}
+
+const SEQ = {
+  add(lv){ const d = lv===1 ? ri(2,10) : ri(6,25), a = ri(1, lv===1 ? 20 : 60), t = [0,1,2,3,4].map(i => a + i*d), ans = a + 5*d;
+    return {t, ans, wrong:[ans+1, ans-1, ans+d, ans-d, ans+2, ans+10], explain:`The numbers go up by ${d} each time, so the next one is ${num(t[4])} + ${d} = ${num(ans)}.`}; },
+  sub(lv){ const d = lv===1 ? ri(2,10) : ri(6,25), ans = ri(1,30), t = [5,4,3,2,1].map(i => ans + i*d);
+    return {t, ans, wrong:[ans+1, ans-1, ans+d, ans-d, ans+2, ans+10], explain:`The numbers go down by ${d} each time, so the next one is ${num(t[4])} − ${d} = ${num(ans)}.`}; },
+  times(lv){ const r = lv===2 ? 2 : pick([2,3]), a = ri(1, r===2 ? 6 : 3), t = [0,1,2,3,4].map(i => a * r**i), ans = a * r**5;
+    return {t, ans, wrong:[t[4] + (t[4]-t[3]), ans+r, ans-r, t[4]*(r+1), ans+1, ans*r], explain:`Each number is multiplied by ${r}, so the next one is ${num(t[4])} × ${r} = ${num(ans)}.`}; },
+  grow(lv){ const a = ri(1,20), d = ri(1,4), s = lv===2 ? 1 : pick([1,2]), t = [a];
+    for (let i = 0; i < 4; i++) t.push(t[i] + d + i*s);
+    const g = d + 4*s, ans = t[4] + g;
+    return {t, ans, wrong:[t[4] + g - s, ans+1, ans-1, ans+s, ans+2*s+1, ans+5], explain:`The gaps get ${s} bigger each time: +${d}, +${d+s}, +${d+2*s}, +${d+3*s}. So the next gap is +${g}: ${num(t[4])} + ${g} = ${num(ans)}.`}; },
+  square(){ const n = ri(1,6), t = [0,1,2,3,4].map(i => (n+i)**2), m = n + 5, ans = m*m;
+    return {t, ans, wrong:[t[4] + (t[4]-t[3]), ans+1, ans-1, ans+m, ans-m, (m+1)**2], explain:`These are square numbers: ${n} × ${n} = ${n*n}, ${n+1} × ${n+1} = ${(n+1)**2}, and so on. Next is ${m} × ${m} = ${ans}.`}; },
+  fib(){ const a = ri(1,5), b = ri(a,8), t = [a,b];
+    while (t.length < 5) t.push(t.at(-1) + t.at(-2));
+    const ans = t[3] + t[4];
+    return {t, ans, wrong:[t[4] + (t[4]-t[3]), ans+1, ans-1, t[4]+t[2], 2*t[4], ans+2], explain:`Each number is the two numbers before it added together: ${t[3]} + ${t[4]} = ${ans}.`}; },
+  two(){ const a = ri(1,10), d1 = ri(2,6), d2 = ri(2,5), b = ri(4*d2 + 2, 4*d2 + 30);
+    const A = i => a + i*d1, B = i => b - i*d2, t = [A(0),B(0),A(1),B(1),A(2),B(2)], ans = A(3);
+    if (t.includes(ans)) return null;   // a repeated number would look like a trick
+    return {t, ans, wrong:[B(3), ans+1, ans-1, B(2)-d1, ans+d1, A(2)+d2], explain:`Two patterns take turns. The 1st, 3rd and 5th numbers go up by ${d1}: ${A(0)}, ${A(1)}, ${A(2)}. The 2nd, 4th and 6th go down by ${d2}. The next number belongs to the first pattern: ${A(2)} + ${d1} = ${ans}.`}; },
+  mix(){ const a = ri(1,6), k = ri(1,5), t = [a];
+    for (let i = 1; i < 5; i++) t.push(i % 2 ? t[i-1]*2 : t[i-1] + k);
+    const ans = t[4]*2;
+    return {t, ans, wrong:[t[4]+k, ans+k, ans-1, ans+1, t[4]+t[3], ans+2*k], explain:`The rule takes turns: × 2, then + ${k}, then × 2, then + ${k}. The last step was + ${k}, so next is × 2: ${t[4]} × 2 = ${ans}.`}; }
+};
+const SEQ_LV = {1:['add','sub'], 2:['add','sub','times','grow'], 3:['grow','times','square','fib','two','mix']};
+
+const CALC = {
+  addMiss(){ const a = ri(5,60), x = ri(5,60), b = a + x;
+    return {stem:eqn(`${BOX} + ${a} = ${b}`), ans:x, wrong:[a+b, x+1, x-1, x+10, x-10], explain:`Do the opposite of adding: ${b} − ${a} = ${x}.`}; },
+  subMiss(){ const a = ri(5,50), b = ri(5,50), x = a + b;
+    return {stem:eqn(`${BOX} − ${a} = ${b}`), ans:x, wrong:[Math.abs(b-a), x+1, x-1, x+10, x-10], explain:`Do the opposite of taking away: ${b} + ${a} = ${x}. Check: ${x} − ${a} = ${b}.`}; },
+  mulMiss(){ const a = ri(2,12), x = ri(2,12), b = a * x;
+    return {stem:eqn(`${a} × ${BOX} = ${b}`), ans:x, wrong:[b-a, x+1, x-1, x+2, b+a], explain:`Do the opposite of multiplying: ${b} ÷ ${a} = ${x}.`}; },
+  divMiss(){ const a = ri(2,12), x = ri(2,12), b = a * x;
+    return {stem:eqn(`${b} ÷ ${BOX} = ${a}`), ans:x, wrong:[b-a, b*a, x+1, x-1, x+2], explain:`${b} shared into groups of ${a}: ${b} ÷ ${a} = ${x}. Check: ${b} ÷ ${x} = ${a}.`}; },
+  order(){ const a = ri(2,20), b = ri(2,9), c = ri(2,9), ans = a + b*c;
+    return {stem:eqn(`${a} + ${b} × ${c} = ${BOX}`), ans, wrong:[(a+b)*c, a*b+c, ans+1, ans-1, a+b+c], explain:`Multiply before you add: ${b} × ${c} = ${b*c}, then ${a} + ${b*c} = ${ans}.`,
+      hint:'Remember the order: brackets, then × and ÷, then + and −.'}; },
+  order2(){ const b = ri(2,6), c = ri(2,6), a = ri(b*c + 2, b*c + 30), ans = a - b*c;
+    return {stem:eqn(`${a} − ${b} × ${c} = ${BOX}`), ans, wrong:[(a-b)*c, ans+1, ans-1, a-b-c, ans+b], explain:`Multiply before you take away: ${b} × ${c} = ${b*c}, then ${a} − ${b*c} = ${ans}.`,
+      hint:'Remember the order: brackets, then × and ÷, then + and −.'}; },
+  twoStep(){ const x = ri(2,12), a = ri(2,9), b = ri(1,20), c = x*a + b;
+    return {stem:eqn(`${BOX} × ${a} + ${b} = ${c}`), ans:x, wrong:[(c+b)/a, c-b, c/a - b, x+1, x-1, x+2], explain:`Undo each step, working backwards: ${c} − ${b} = ${c-b}, then ${c-b} ÷ ${a} = ${x}.`}; },
+  twoStep2(){ const c = ri(2,12), a = ri(2,6), b = ri(1,10), x = (c+b)*a;
+    return {stem:eqn(`${BOX} ÷ ${a} − ${b} = ${c}`), ans:x, wrong:[(c-b)*a, c*a + b, c*a, x+a, x-a, x+1], explain:`Undo each step, working backwards: ${c} + ${b} = ${c+b}, then ${c+b} × ${a} = ${x}.`}; },
+  bracket(){ const y = ri(2,12), b = ri(2,9), a = ri(2,15), c = y*b, x = y + a;
+    return {stem:eqn(`(${BOX} − ${a}) × ${b} = ${c}`), ans:x, wrong:[y-a, y, c-a, x+1, x-1, x+b], explain:`Undo the × ${b} first: ${c} ÷ ${b} = ${y}. So the bracket is ${y}, and ${y} + ${a} = ${x}.`}; },
+  neg(){ const a = ri(3,20), b = ri(a+2, a+25), ans = a - b;
+    return {stem:eqn(`${a} − ${b} = ${BOX}`), ans, wrong:[b-a, -(a+b), ans+1, ans-1, a+b], explain:`${b} is bigger than ${a}, so the answer is below zero. ${b} − ${a} = ${b-a}, so ${a} − ${b} = ${num(ans)}.`,
+      hint:'Picture a number line. Start at the first number and count back past zero.'}; },
+  balance(){ const a = ri(2,12), b = ri(2,12), ds = [2,3,4,5,6,7,8,9,10,11,12].filter(c => c !== a && c !== b && (a*b) % c === 0);
+    if (!ds.length) return null;
+    const c = pick(ds), ans = a*b / c;
+    return {stem:eqn(`${a} × ${b} = ${c} × ${BOX}`), ans, wrong:[a*b - c, a*b, ans+1, ans-1, a+b-c], explain:`Both sides must be equal. ${a} × ${b} = ${a*b}, and ${a*b} ÷ ${c} = ${ans}.`,
+      hint:'Work out the side you know first. The other side must make the same number.'}; },
+  same(){ const n = ri(4,15);
+    return {stem:eqn(`${BOX} × ${BOX} = ${n*n}`) + '<p class="mnote">Both boxes hold the same number.</p>', ans:n, wrong:[n*n/2, n+1, n-1, 2*n, n+2], explain:`${n} × ${n} = ${n*n}, so the number is ${n}.`,
+      hint:'Which number times itself makes this? Think of your square numbers.'}; },
+  bracket2(){ const a = ri(2,6), b = ri(2,9), c = ri(2,9), d = ri(1,10), ans = a*(b+c) - d;
+    if (ans < 2) return null;
+    return {stem:eqn(`${a} × (${b} + ${c}) − ${d} = ${BOX}`), ans, wrong:[a*b + c - d, a*(b+c-d), ans+1, ans-1, a*(b+c)], explain:`Brackets first: ${b} + ${c} = ${b+c}. Then ${a} × ${b+c} = ${a*(b+c)}. Then ${a*(b+c)} − ${d} = ${ans}.`,
+      hint:'Brackets first, then ×, then −.'}; }
+};
+const CALC_LV = {1:['addMiss','subMiss','mulMiss','divMiss'], 2:['order','order2','twoStep','twoStep2','mulMiss','divMiss'], 3:['bracket','neg','balance','same','bracket2','twoStep2']};
+
+const DEC_FR = [[1,2],[1,4],[3,4],[1,5],[2,5],[3,5],[4,5],[1,10],[3,10],[7,10],[9,10]];
+const NICE = {100:[1,10],125:[1,8],200:[1,5],250:[1,4],300:[3,10],375:[3,8],400:[2,5],500:[1,2],600:[3,5],625:[5,8],700:[7,10],750:[3,4],800:[4,5],875:[7,8],900:[9,10]};
+const SIMPLE = [[1,2],[1,3],[2,3],[1,4],[3,4],[1,5],[2,5],[3,5],[4,5],[1,6],[5,6],[3,8],[5,8],[3,10],[7,10]];
+const FDP = {
+  unitOf(){ const d = pick([2,3,4,5,10]), k = ri(2,12), n = d*k;
+    return {stem:`What is ${frac(1,d)} of ${n}?`, ans:k, wrong:[n-k, k+1, k-1, d===2 ? n/4 : n/2, 2*k, k+d], explain:`To find ${frac(1,d)}, divide by ${d}: ${n} ÷ ${d} = ${k}.`,
+      hint:'Divide by the bottom number of the fraction.'}; },
+  pct1(){ const p = pick([10,50,25]), n = p===10 ? 10*ri(2,15) : p===50 ? 2*ri(5,50) : 4*ri(3,25), ans = n*p/100, by = {10:10, 50:2, 25:4}[p];
+    return {stem:`What is ${p}% of ${n}?`, ans, wrong:[n-ans, p===10 ? n/2 : n/10, ans+5, ans-5, p, 2*ans], explain:`${{10:'10% means divide by 10', 50:'50% is a half, so divide by 2', 25:'25% is a quarter, so divide by 4'}[p]}: ${n} ÷ ${by} = ${ans}.`,
+      hint:'10% means divide by 10. 50% is a half. 25% is a quarter.'}; },
+  fracOf(lv){ const d = pick([3,4,5,6,8,10]), m = pick([2,3,4,5,6,7,8,9].filter(x => x < d && gcd(x, d) === 1)), k = ri(2, lv===3 ? 25 : 12), n = d*k, ans = m*k;
+    return {stem:`What is ${frac(m,d)} of ${n}?`, ans, wrong:[k, n-ans, ans+k, ans-k, n/m, ans+1, ans-1, ans+m], explain:`First find ${frac(1,d)}: ${n} ÷ ${d} = ${k}. Then times by ${m}: ${m} × ${k} = ${ans}.`,
+      hint:'Divide by the bottom number, then multiply by the top number.'}; },
+  pct2(lv){ const p = pick([5,15,20,30,40,75]), n = 20*ri(1, lv===3 ? 25 : 12), ans = n*p/100, q = Math.floor(p/10), r = p % 10 ? 1 : 0;
+    return {stem:`What is ${p}% of ${n}?`, ans, wrong:[n-ans, n*p/10, ans + n/10, ans - n/10, p, ans+5],
+      explain:`10% of ${n} is ${n/10}${r ? `, and 5% is half of that, ${n/20}` : ''}. ${p === 75 ? `75% is three quarters: ${n} ÷ 4 = ${n/4}, and ${n/4} × 3 = ${ans}.` : q ? `${p}% is ${q > 1 ? `${q} × 10%` : '10%'}${r ? ' + 5%' : ''}, so the answer is ${ans}.` : `So ${p}% of ${n} is ${ans}.`}`,
+      hint:'Find 10% first by dividing by 10. Then build up to the percentage you need.'}; },
+  dec2pct(){ const v = ri(1,99);
+    return {stem:`Write ${dec(v*10)} as a percentage.`, ans:`${v}%`, fmt:same, wrong:[`${dec(v*100)}%`, `${v*10}%`, `${dec(v*10)}%`, `${100-v}%`, `${v+10}%`], explain:`Multiply by 100 to turn a decimal into a percentage: ${dec(v*10)} × 100 = ${v}%.`,
+      hint:'Percent means “out of 100”. Multiply the decimal by 100.'}; },
+  frac2dec(lv){ const [a,b] = pick(lv===3 ? [...DEC_FR, [1,8],[3,8]] : DEC_FR), th = a*1000/b;
+    return {stem:`Write ${frac(a,b)} as a decimal.`, ans:th, fmt:dec, wrong:[a*1000 + b*(b>=10 ? 10 : 100), a*100 + b*(b>=10 ? 1 : 10), a*100, b*100, th+100, th-100], explain:`${frac(a,b)} means ${a} ÷ ${b}, which is ${dec(th)}.`,
+      hint:'A fraction is a division: top number ÷ bottom number.'}; },
+  pctChange(){ const up = Math.random() < .5, p = pick([5,10,15,20,25,30]), n = 20*ri(2,20), ch = n*p/100, ans = up ? n + ch : n - ch;
+    return {stem:`${up ? 'Increase' : 'Decrease'} ${n} by ${p}%.`, ans, wrong:[ch, up ? n-ch : n+ch, up ? n+p : n-p, ans+10, ans-10], explain:`${p}% of ${n} is ${ch}. ${n} ${up ? '+' : '−'} ${ch} = ${ans}.`,
+      hint:'Work out the percentage first, then add it on or take it away.'}; },
+  largest(){ const vals = shuffle(Object.keys(NICE).map(Number).concat([150,350,450,550,650,850])).slice(0,5);
+    const reps = vals.map(th => pick([NICE[th] && frac(...NICE[th]), dec(th), th % 10 === 0 && `${th/10}%`].filter(Boolean)));
+    if (reps.filter(r => r.includes('frac')).length < 1 || reps.filter(r => r.includes('%')).length < 1) return null;
+    const big = Math.random() < .5, best = vals.indexOf(big ? Math.max(...vals) : Math.min(...vals));
+    return {stem:`Which of these is the ${big ? 'largest' : 'smallest'}?`, ans:reps[best], fmt:same, wrong:reps.filter((_,i) => i !== best),
+      explain:`Turn them all into decimals: ${vals.map((th,i) => `${reps[i]} = ${dec(th)}`).join(', ')}. The ${big ? 'largest' : 'smallest'} is ${reps[best]}.`,
+      hint:'Turn every one into a decimal, then compare.'}; },
+  simplest(){ const [p,q] = pick(SIMPLE), m = ri(2,9);
+    const others = shuffle(SIMPLE.filter(([x,y]) => x*q !== y*p)).sort((f,g) => (f[1]===q ? 0 : 1) - (g[1]===q ? 0 : 1));
+    return {stem:`Write ${frac(p*m, q*m)} in its simplest form.`, ans:frac(p,q), fmt:same, wrong:others.map(f => frac(...f)),
+      explain:`Divide the top and the bottom by ${m}: ${p*m} ÷ ${m} = ${p} and ${q*m} ÷ ${m} = ${q}, so it is ${frac(p,q)}.`,
+      hint:'Find the biggest number that divides into both the top and the bottom.'}; }
+};
+const FDP_LV = {1:['unitOf','pct1'], 2:['fracOf','pct2','dec2pct','frac2dec'], 3:['pctChange','largest','simplest','fracOf','pct2','frac2dec']};
+
+const ITEMS = [['pencil','pencils'],['rubber','rubbers'],['ruler','rulers'],['badge','badges'],['notebook','notebooks']];
+const WORD = {
+  share(){ const N = pick(NAMES), k = ri(2,8), x = ri(3,12), t = k*x, item = pick(['stickers','sweets','marbles','cards','conkers']);
+    return {stem:`${N} has ${t} ${item} and gives them all away, sharing them equally between ${k} friends. How many ${item} does each friend get?`, ans:x, wrong:[t-k, x+1, x-1, x+2, k, x-2], explain:`Sharing means dividing: ${t} ÷ ${k} = ${x}.`}; },
+  costMany(){ const [one, many] = pick(ITEMS), p = 5*ri(3,19), k = ri(2,6), ans = p*k;
+    return {stem:`A ${one} costs ${p}p. How much do ${k} ${many} cost?`, ans, fmt:money, wrong:[p*(k-1), p*(k+1), ans+10, ans-10, p+k*10], explain:`${k} × ${p}p = ${ans}p, which is ${money(ans)}.`}; },
+  change(){ const N = pick(NAMES), price = 5*ri(21,199), note = price < 500 ? 500 : 1000, ans = note - price;
+    return {stem:`${N} buys a book for ${money(price)} and pays with a ${money(note).replace('.00','')} note. How much change does ${N} get?`, ans, fmt:money, wrong:[ans+10, ans-10, ans+100, ans-100, ans+5], explain:`${money(note)} − ${money(price)} = ${money(ans)}. Tip: count on from ${money(price)} to ${money(note)}.`}; },
+  lesson(){ const start = 60*ri(8,10) + 5*ri(0,11), len = 5*ri(5,15), end = start + len;
+    return {stem:`A lesson starts at ${clock(start)} and lasts ${dur(len)}. What time does it finish?`, ans:end, fmt:clock, wrong:[end+40, end+10, end-10, end+60, end-5], explain:`Count on ${dur(len)} from ${clock(start)}: it finishes at ${clock(end)}. Remember there are 60 minutes in an hour, not 100.`,
+      hint:'Count on to the next o’clock first, then add the rest.'}; },
+  tickets(){ const adult = 50*ri(6,16), child = 25*ri(8, adult/25 - 2), na = ri(1,3), nc = ri(1,4), ans = na*adult + nc*child;
+    return {stem:`Tickets cost ${money(adult)} for an adult and ${money(child)} for a child. How much do ${na} adult${na>1?'s':''} and ${nc} child${nc>1?'ren':''} pay altogether?`, ans, fmt:money,
+      wrong:[adult+child, (na+nc)*adult, (na+nc)*child, ans+50, ans-50, ans+100], explain:`Adults: ${na} × ${money(adult)} = ${money(na*adult)}. Children: ${nc} × ${money(child)} = ${money(nc*child)}. Total: ${money(ans)}.`}; },
+  filmLen(){ const start = 60*ri(13,18) + 5*ri(0,11), len = 5*ri(14,40), end = start + len;
+    return {stem:`A film starts at ${clock(start)} and finishes at ${clock(end)}. How long is the film?`, ans:len, fmt:dur, wrong:[len+40, len-40, len+10, len-10, len+60], explain:`Count on from ${clock(start)} to ${clock(end)}: that is ${dur(len)}.`,
+      hint:'Count on to the next o’clock, then count the whole hours, then the minutes left.'}; },
+  ratio(){ const [N, M] = shuffle(NAMES), a = ri(1,5), b = pick([1,2,3,4,5].filter(x => x !== a && gcd(x, a) === 1)), u = ri(2,10), t = (a+b)*u;
+    return {stem:`${N} and ${M} share ${t} sweets in the ratio ${a} : ${b}. How many sweets does ${M} get?`, ans:b*u, wrong:[a*u, t/2, t-b, u, b*u+b, t/b], explain:`There are ${a} + ${b} = ${a+b} parts. One part is ${t} ÷ ${a+b} = ${u}. ${M} gets ${b} part${b>1?'s':''}: ${b} × ${u} = ${b*u}.`,
+      hint:'Add the ratio numbers to find how many parts there are altogether.'}; },
+  mean(){ const m = ri(4,15), xs = [0,1,2,3].map(() => ri(Math.max(1, m-8), m+8)), last = 5*m - xs.reduce((s,x) => s+x, 0);
+    if (last < 1 || last > 30) return null;
+    const all = shuffle([...xs, last]), sorted = [...all].sort((p,q) => p-q);
+    return {stem:`What is the mean of ${all.slice(0,4).join(', ')} and ${all[4]}?`, ans:m, wrong:[sorted[2], sorted[4]-sorted[0], m+1, m-1, 5*m], explain:`Add them up: ${all.join(' + ')} = ${5*m}. There are 5 numbers, so ${5*m} ÷ 5 = ${m}.`,
+      hint:'Add them all up, then divide by how many numbers there are.'}; },
+  speed(){ const s = 2*ri(10,45), h = ri(1,3), ans = s*h + s/2;
+    return {stem:`A car travels at ${s} km per hour. How far does it go in ${h} hour${h>1?'s':''} and 30 minutes?`, ans, fmt:x => `${x} km`, wrong:[s*h, s*(h+1), s*h + 30, ans+10, ans-10], explain:`In ${h} hour${h>1?'s':''} it goes ${s} × ${h} = ${s*h} km. In half an hour it goes half of ${s}, which is ${s/2} km. ${s*h} + ${s/2} = ${ans} km.`,
+      hint:'Work out the whole hours first, then half an hour is half the speed.'}; },
+  sale(){ const p = 20*ri(2,15), q = pick([10,20,25,30,40,50]), disc = p*q/100, ans = p - disc;
+    return {stem:`A bike costs £${p}. In a sale it has ${q}% off. What is the sale price?`, ans, fmt:x => `£${x}`, wrong:[disc, p-q, p+disc, ans+5, ans-5], explain:`${q}% of £${p} is £${disc}. £${p} − £${disc} = £${ans}.`,
+      hint:'Work out how much is taken off, then subtract it from the price.'}; },
+  missingMean(){ const m = ri(5,12), xs = [0,1,2,3].map(() => ri(1,20)), sum = xs.reduce((s,x) => s+x, 0), x = 5*m - sum;
+    if (x < 1 || x > 30) return null;
+    return {stem:`The mean of five numbers is ${m}. Four of the numbers are ${xs.slice(0,3).join(', ')} and ${xs[3]}. What is the fifth number?`, ans:x, wrong:[m, 5*m, sum/4, x+1, x-1, 4*m - sum], explain:`Five numbers with a mean of ${m} add up to 5 × ${m} = ${5*m}. The four you know add up to ${sum}. ${5*m} − ${sum} = ${x}.`,
+      hint:'Mean × how many numbers = the total. What is missing from the total?'}; },
+  ages(){ const [N, M] = shuffle(NAMES), r = pick([2,3,4]), y = ri(3,12), total = y*(r+1);
+    return {stem:`${N} is ${r===2 ? 'twice' : r + ' times'} as old as ${M}. Their ages add up to ${total}. How old is ${N}?`, ans:r*y, wrong:[y, total/r, total/2, r*y + r, total - r, r*y + 1, r*y - 1, y*(r-1)], explain:`${M} has 1 part and ${N} has ${r} parts, so ${r+1} parts make ${total}. One part is ${total} ÷ ${r+1} = ${y}, so ${N} is ${r} × ${y} = ${r*y}.`,
+      hint:'Think of the ages as parts. How many parts are there altogether?'}; }
+};
+const WORD_LV = {1:['share','costMany','change','lesson'], 2:['tickets','filmLen','ratio','mean','change'], 3:['speed','sale','missingMean','ages','ratio','tickets']};
+
+const MEASURE = {
+  perim(){ const l = ri(3,15), w = ri(2,10);
+    if (l*w === 2*(l+w)) return null;
+    return {stem:`A rectangle is ${l} cm long and ${w} cm wide. What is its perimeter?`, ans:2*(l+w), fmt:cm, wrong:[l*w, l+w, 2*l+w, 2*(l+w)+2, 2*(l+w)-2], explain:`Perimeter is the distance all the way round: ${l} + ${w} + ${l} + ${w} = ${2*(l+w)} cm.`,
+      hint:'Perimeter means all the way round the edge. A rectangle has 4 sides.'}; },
+  units(){ const w = ri(1,9), half = Math.random() < .5, kind = pick(['cm','g','min']), x = `${w}${half ? '.5' : ''}`, s = 's';
+    if (w === 1 && !half) return null;   // "How many minutes in 1 hour?" is too easy
+    if (kind==='cm'){ const ans = 100*w + 50*half;
+      return {stem:`How many centimetres are there in ${x} metre${s}?`, ans, fmt:num, wrong:[ans/10, ans*10, 100*w + 5*half, ans+100, ans-50, ans+10], explain:`There are 100 cm in 1 metre, so ${x} × 100 = ${ans} cm.`, hint:'How many centimetres are in 1 metre?'}; }
+    if (kind==='g'){ const ans = 1000*w + 500*half;
+      return {stem:`How many grams are there in ${x} kilogram${s}?`, ans, fmt:num, wrong:[ans/10, ans/100, 1000*w + 5*half, ans+1000, ans-500, ans+100], explain:`There are 1,000 g in 1 kg, so ${x} × 1,000 = ${num(ans)} g.`, hint:'How many grams are in 1 kilogram?'}; }
+    const ans = 60*w + 30*half;
+    return {stem:`How many minutes are there in ${w}${half ? '½' : ''} hour${s}?`, ans, fmt:num, wrong:[100*w + 50*half, 60*w + 50*half, 60*w + 5*half, ans+30, ans+60, ans-30, ans+15], explain:`There are 60 minutes in an hour. ${w} × 60 = ${60*w}${half ? `, and half an hour is 30 more: ${ans}` : ''}.`, hint:'An hour has 60 minutes, not 100.'}; },
+  straight(){ const a = 5*ri(3,33), ans = 180 - a;
+    return {stem:`Two angles sit side by side on a straight line. One of them is ${a}°. What is the other angle?`, ans, fmt:deg, wrong:[360-a, 90-a, a, ans+10, ans-10], explain:`Angles on a straight line add up to 180°. 180° − ${a}° = ${ans}°.`,
+      hint:'Angles on a straight line add up to 180°.'}; },
+  area(){ const l = ri(3,12), w = ri(2,9);
+    if (l*w === 2*(l+w)) return null;
+    return {stem:`A rectangle is ${l} cm long and ${w} cm wide. What is its area?`, ans:l*w, fmt:cm2, wrong:[2*(l+w), l+w, l*w + l, l*w - w, l*w + 1], explain:`Area = length × width = ${l} × ${w} = ${l*w} cm².`,
+      hint:'Area is the space inside: multiply the length by the width.'}; },
+  tri(){ const a = 5*ri(4,20), b = 5*ri(4,20), c = 180 - a - b;
+    if (c < 15) return null;
+    return {stem:`Two angles in a triangle are ${a}° and ${b}°. What is the third angle?`, ans:c, fmt:deg, wrong:[360-a-b, a+b, c+10, c-10, 90 - (a+b)/2], explain:`The angles in a triangle add up to 180°. ${a}° + ${b}° = ${a+b}°, and 180° − ${a+b}° = ${c}°.`,
+      hint:'The three angles in a triangle add up to 180°.'}; },
+  to24(){ const m = 60*ri(13,23) + 5*ri(0,11), h = Math.floor(m/60);
+    return {stem:`What is ${clock(m)} on a 24-hour clock?`, ans:clock24(m), fmt:same, wrong:[clock24(m-720), clock24(m-120), clock24(m+60), clock24(m-60)], explain:`For pm times, add 12 to the hour: ${h-12} + 12 = ${h}, so it is ${clock24(m)}.`,
+      hint:'For times after midday, add 12 to the hour.'}; },
+  squareSide(){ const s = ri(3,15), P = 4*s;
+    return {stem:`A square has a perimeter of ${P} cm. How long is each side?`, ans:s, fmt:cm, wrong:[P/2, P-4, s+1, s-1, Math.sqrt(P), s+2], explain:`A square has 4 equal sides, so ${P} ÷ 4 = ${s} cm.`,
+      hint:'A square has 4 sides, all the same length.'}; },
+  lShape(){ const W = ri(6,14), H = ri(5,12), w = ri(2, W-3), h = ri(2, H-3), ans = W*H - w*h;
+    return {stem:`An L-shape is made by cutting a ${w} cm by ${h} cm rectangle from one corner of a ${W} cm by ${H} cm rectangle. What is the area of the L-shape?`, ans, fmt:cm2,
+      wrong:[W*H, W*H + w*h, 2*(W+H), ans+w, ans-h, w*h], explain:`The big rectangle is ${W} × ${H} = ${W*H} cm². The piece cut out is ${w} × ${h} = ${w*h} cm². ${W*H} − ${w*h} = ${ans} cm².`,
+      hint:'Find the area of the big rectangle, then take away the piece that was cut out.'}; },
+  triArea(){ const b = ri(4,16), h = ri(3,12);
+    if ((b*h) % 2) return null;
+    return {stem:`A triangle has a base of ${b} cm and a height of ${h} cm. What is its area?`, ans:b*h/2, fmt:cm2, wrong:[b*h, b+h, b*h/2 + b, b*h/2 - h, 2*(b+h)], explain:`Area of a triangle = half of base × height. ${b} × ${h} = ${b*h}, and half of that is ${b*h/2} cm².`,
+      hint:'A triangle is half of a rectangle with the same base and height.'}; },
+  volume(){ const l = ri(2,10), w = ri(2,6), h = ri(2,6), ans = l*w*h;
+    return {stem:`A box is ${l} cm long, ${w} cm wide and ${h} cm tall. What is its volume?`, ans, fmt:cm3, wrong:[l*w + h, 2*(l*w + l*h + w*h), l+w+h, ans + l*w, l*w*(h-1)], explain:`Volume = length × width × height = ${l} × ${w} × ${h} = ${ans} cm³.`,
+      hint:'Volume = length × width × height.'}; },
+  aroundPoint(){ const a = 5*ri(6,28), b = 5*ri(6,28), c = 5*ri(6,28), d = 360 - a - b - c;
+    if (d < 20) return null;
+    return {stem:`Four angles meet at a point. Three of them are ${a}°, ${b}° and ${c}°. What is the fourth angle?`, ans:d, fmt:deg, wrong:[180-a-b-c, a+b+c, d+10, d-10, 360-a-b], explain:`Angles around a point add up to 360°. ${a}° + ${b}° + ${c}° = ${a+b+c}°, and 360° − ${a+b+c}° = ${d}°.`,
+      hint:'Angles all the way round a point add up to 360°.'}; },
+  isosceles(){ const t = 2*ri(10,70), each = (180 - t)/2;
+    return {stem:`In an isosceles triangle, the angle between the two equal sides is ${t}°. What size is each of the other two angles?`, ans:each, fmt:deg, wrong:[t, 180-t, (360-t)/2, each+10, each-10], explain:`The angles add up to 180°. 180° − ${t}° = ${180-t}°. The other two angles are equal, so each one is ${180-t}° ÷ 2 = ${each}°.`,
+      hint:'An isosceles triangle has two equal angles. All three add up to 180°.'}; }
+};
+const MEASURE_LV = {1:['perim','units','straight'], 2:['area','tri','to24','squareSide','units'], 3:['lShape','triArea','volume','aroundPoint','isosceles','tri']};
+
+const MATHS = {
+  seq:{kinds:SEQ, lv:SEQ_LV, prompt:'What is the next number in the sequence?', hint:'Write down the gap between each pair of numbers. Is the gap the same, or does it change?'},
+  calc:{kinds:CALC, lv:CALC_LV, prompt:'What number goes in the box?', hint:'Work backwards and undo each step with the opposite: + undoes −, × undoes ÷.'},
+  fdp:{kinds:FDP, lv:FDP_LV, prompt:'', hint:'Take it one step at a time and write down your working.'},
+  word:{kinds:WORD, lv:WORD_LV, prompt:'', hint:'Read it twice. Write down the numbers, then decide: add, take away, times or share?'},
+  measure:{kinds:MEASURE, lv:MEASURE_LV, prompt:'', hint:'Write down the facts you know, then work out what is missing.'}
+};
+const MATHS_TYPES = Object.keys(MATHS);
+function genMaths(type, lv){
+  const T = MATHS[type];
+  for (;;){
+    const r = T.kinds[pick(T.lv[lv])](lv);
+    if (!r) continue;
+    const o = mathsOpts(r.ans, r.wrong, r.fmt);
+    if (!o) continue;
+    const stem = r.t ? `<p class="meq">${r.t.map(num).join(', ')}, ?</p>` : r.stem.startsWith('<p') ? r.stem : `<p class="mword">${r.stem}</p>`;
+    return {type, prompt:T.prompt, stem, opts:o.opts, correct:o.correct, explain:r.explain, hint:r.hint || T.hint};
+  }
+}
+function makeMathsQuestions(mode, lv){
+  const types = mode==='mmixed' ? shuffle([...MATHS_TYPES, ...MATHS_TYPES]) : Array(ROUND).fill(mode);
+  return types.map(t => genMaths(t, +lv));
+}
+
 /* ================= Words questions ================= */
 // Every pair of words that share an entry (same or opposite meaning), across all levels
 const LINKS = {};
@@ -958,17 +1247,20 @@ function makeWordQuestions(m, l){
 
 /* ================= Menu ================= */
 let tab = store.get('wm-tab') || 'words';
+const SUBJECTS = ['words','shapes','maths'];
+const PICKS = {words:['mode','level'], shapes:['smode','slevel'], maths:['mmode','mlevel']};   // radio names for game and level
 const val = name => document.querySelector(`input[name=${name}]:checked`).value;
 const bestKey = (m,l) => `wm-best-${m}-${l}`;
 function setTab(t){
   tab = t; store.set('wm-tab', t);
-  for (const x of ['words','shapes']){ $('tab-'+x).setAttribute('aria-selected', String(x===t)); $('panel-'+x).hidden = x!==t; }
+  for (const x of SUBJECTS){ $('tab-'+x).setAttribute('aria-selected', String(x===t)); $('panel-'+x).hidden = x!==t; }
   showBest();
 }
 $('tab-words').addEventListener('click', () => setTab('words'));
 $('tab-shapes').addEventListener('click', () => setTab('shapes'));
+$('tab-maths').addEventListener('click', () => setTab('maths'));
 function showBest(){
-  const [m, l, el] = tab==='words' ? [val('mode'), val('level'), 'best-words'] : [val('smode'), val('slevel'), 'best-shapes'];
+  const [m, l, el] = [val(PICKS[tab][0]), val(PICKS[tab][1]), 'best-' + tab];
   const b = store.get(bestKey(m, l));
   $(el).textContent = b != null ? `Best for ${MODE_NAMES[m]}, ${LEVEL_NAMES[l]}: ${b} points` : `No score yet for ${MODE_NAMES[m]}, ${LEVEL_NAMES[l]}. Have a go!`;
 }
@@ -986,6 +1278,7 @@ function renderProgress(){
     <div class="pstat"><b>${P.run}</b><span>right in a row</span></div>
     <div class="pstat"><b>${m}<small>/${all.length}</small></b><span>words mastered</span></div>
     <div class="pstat"><b>${P.shapes.solved}</b><span>shape puzzles solved</span></div>
+    <div class="pstat"><b>${P.maths.solved}</b><span>maths questions solved</span></div>
     <p class="pnote">${note} ${P.rounds} round${P.rounds===1?'':'s'} played. A word is mastered when you get it right twice in a row.</p>`;
   for (const l in WORDS) $('lvp-' + l).textContent = `${WORDS[l].filter(e => mastered(e.w)).length}/${WORDS[l].length} mastered`;
   const c = P.current;
@@ -1015,16 +1308,15 @@ $('reset').addEventListener('click', () => {
 let S = null;
 let sel = [];   // words picked so far in Pick a Pair / Odd Ones Out
 function start(subject){
-  const mode = subject==='words' ? val('mode') : val('smode');
-  const level = subject==='words' ? val('level') : val('slevel');
+  const mode = val(PICKS[subject][0]), level = val(PICKS[subject][1]);
   S = {subject, mode, level, i:0, score:0, streak:0, bestStreak:0, results:[], answered:false, hint:false,
-       qs: subject==='words' ? makeWordQuestions(mode, level) : makeShapeQuestions(mode, level)};
+       qs: {words:makeWordQuestions, shapes:makeShapeQuestions, maths:makeMathsQuestions}[subject](mode, level)};
   P.current = S; saveP();
   showGame();
 }
 function showGame(){
   $('start').hidden = true; $('end').hidden = true; $('game').hidden = false;
-  $('qlabel').textContent = S.subject==='words' ? 'Word' : 'Puzzle';
+  $('qlabel').textContent = {words:'Word', shapes:'Puzzle', maths:'Question'}[S.subject];
   render();
   window.scrollTo({top:0});
 }
@@ -1037,6 +1329,7 @@ function resume(){
 $('resume').addEventListener('click', resume);
 $('play-words').addEventListener('click', () => start('words'));
 $('play-shapes').addEventListener('click', () => start('shapes'));
+$('play-maths').addEventListener('click', () => start('maths'));
 
 function hud(){
   $('qn').textContent = `${Math.min(S.i+1, ROUND)}/${ROUND}`;
@@ -1058,7 +1351,16 @@ function render(){
   hud();
   const q = S.qs[S.i]; S.answered = false; S.hint = false;
   const c = $('qcard');
-  if (S.subject === 'shapes'){
+  if (S.subject === 'maths'){
+    c.innerHTML = `
+      <span class="chip mix">${MODE_NAMES[q.type]}</span>
+      ${q.prompt ? `<p class="ask">${q.prompt}</p>` : ''}
+      ${q.stem}
+      <div class="sopts text">${q.opts.map((o,k) => `<button class="sopt" data-i="${k}">${o}<span class="lab">${'abcde'[k]}</span></button>`).join('')}</div>
+      <div class="toolbar"><button class="hint" id="hintBtn">${HINT_LABEL}</button></div>
+      <div id="fb"></div>`;
+    c.querySelectorAll('.sopt').forEach(b => b.addEventListener('click', () => answerShape(+b.dataset.i)));
+  } else if (S.subject === 'shapes'){
     c.innerHTML = `
       <span class="chip mix">${MODE_NAMES[q.type]}</span>
       <p class="ask">${q.prompt}</p>
@@ -1194,7 +1496,7 @@ function useHint(){
   S.hint = true;
   $('hintBtn').disabled = true;
   const q = S.qs[S.i];
-  $('fb').innerHTML = S.subject==='shapes'
+  $('fb').innerHTML = S.subject!=='words'
     ? `<div class="feedback info"><p><b>Clue:</b> ${q.hint}</p></div>`
     : q.h ? `<div class="feedback info"><p><b>Clue:</b> it starts in the word <b>${esc(q.h.s.split(' ')[q.h.at.i])}</b>.</p></div>`
     : `<div class="feedback info"><p class="sentence">${sentenceHTML(q.e)}</p></div>`;
@@ -1212,7 +1514,7 @@ function record(ok){
       if (ok){ ws.c++; ws.r++; } else { ws.c = 0; ws.w++; }
     }
   } else {
-    P.shapes.tried++; if (ok) P.shapes.solved++;
+    const T = P[S.subject]; T.tried++; if (ok) T.solved++;
   }
   if (ok){ P.correct++; P.run++; P.bestRun = Math.max(P.bestRun, P.run); } else P.run = 0;
   P.answered++; markDay(); P.current = S; saveP();
@@ -1223,7 +1525,7 @@ function record(ok){
 function showFeedback(ok, head, body){
   const last = S.i === ROUND - 1;
   $('fb').innerHTML = `<div class="feedback ${ok ? 'good' : 'bad'}"><p class="head">${head}</p>${body}</div>
-    <button class="btn wide" id="next" style="margin-top:12px">${last ? 'See my score' : S.subject==='words' ? 'Next word' : 'Next puzzle'}</button>`;
+    <button class="btn wide" id="next" style="margin-top:12px">${last ? 'See my score' : {words:'Next word', shapes:'Next puzzle', maths:'Next question'}[S.subject]}</button>`;
   $('next').addEventListener('click', next);
   $('next').focus({preventScroll:true});
   $('next').scrollIntoView({block:'nearest', behavior:'smooth'});
@@ -1353,6 +1655,11 @@ function next(){
 }
 
 const TYPE_TIPS = {
+  seq:'Write the gap between each pair of numbers. If the gaps change, look at how they change.',
+  calc:'Work backwards, undoing each step. Remember: × and ÷ come before + and −.',
+  fdp:'For a fraction of an amount, divide by the bottom and times by the top. 10% means divide by 10.',
+  word:'Underline the numbers and the question. Check your answer makes sense.',
+  measure:'Learn the key facts: straight line 180°, triangle 180°, around a point 360°, 60 minutes in an hour.',
   series:'Check one thing at a time: the shape, then the shading, then the dots, then the corners.',
   odd:'Find what four of them share. Count sides and dots, and compare shapes inside shapes.',
   analogy:'List every change from the first shape to the second, then make the same changes.',
@@ -1408,7 +1715,7 @@ $('quit').addEventListener('click', menu);
 document.addEventListener('keydown', ev => {
   if ($('game').hidden || !S || S.answered || ev.metaKey || ev.ctrlKey || ev.altKey) return;
   const k = ev.key.toLowerCase();
-  if (S.subject === 'shapes'){
+  if (S.subject !== 'words'){
     const i = '12345'.includes(k) && k.length===1 ? +k-1 : 'abcde'.indexOf(k);
     if (i >= 0 && k.length===1){ const b = $('qcard').querySelectorAll('.sopt')[i]; if (b) b.click(); }
   } else if (S.mode === 'match' && /^[1-4]$/.test(k)){
@@ -1420,7 +1727,7 @@ document.addEventListener('keydown', ev => {
   }
 });
 
-setTab(tab === 'shapes' ? 'shapes' : 'words');
+setTab(SUBJECTS.includes(tab) ? tab : 'words');
 renderProgress();
 </script>
 
