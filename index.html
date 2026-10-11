@@ -1,0 +1,1104 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Brain Magnets</title>
+<meta name="description" content="Word puzzles and non-verbal reasoning puzzles for children.">
+<meta name="theme-color" content="#EDF0F4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#10141B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Brain Magnets">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+
+/* Layout: one centred column like a fridge door; the title is a row of fridge-magnet letters, play happens on a single card */
+:root{
+  --bg:#EDF0F4; --surface:#FFFFFF; --surface-2:#F4F6F9; --ink:#18202E; --muted:#566074; --line:#D3D9E2;
+  --syn:#1D5BD8; --syn-soft:#E2EBFD; --ant:#D52B3E; --ant-soft:#FCE5E8;
+  --sun:#F2B000; --leaf:#1E9E5A; --on-accent:#FFFFFF; --on-sun:#2A1E00;
+  --good:#16834A; --good-soft:#DDF3E6; --bad:#B9420F; --bad-soft:#FCEADF;
+  --fig-bg:#FFFFFF; --fig-ink:#18202E; --fig-grey:#A7B1C0;
+  --shadow:0 2px 0 rgba(24,32,46,.12), 0 8px 24px rgba(24,32,46,.08);
+  --f-display:"Lilita One", "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#10141B; --surface:#1A2029; --surface-2:#212833; --ink:#E9EDF3; --muted:#9AA4B5; --line:#2E3744;
+  --syn:#6B97FF; --syn-soft:#1B2A4A; --ant:#FF6676; --ant-soft:#46202A;
+  --sun:#F7C948; --leaf:#3CC47C; --on-accent:#0E131A; --on-sun:#2A1E00;
+  --good:#45CC85; --good-soft:#173A28; --bad:#FF9257; --bad-soft:#43271A;
+  --fig-bg:#1F2630; --fig-ink:#E9EDF3; --fig-grey:#5C687A;
+  --shadow:0 2px 0 rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.3);
+  color-scheme:dark; } }
+:root[data-theme="dark"]{
+  --bg:#10141B; --surface:#1A2029; --surface-2:#212833; --ink:#E9EDF3; --muted:#9AA4B5; --line:#2E3744;
+  --syn:#6B97FF; --syn-soft:#1B2A4A; --ant:#FF6676; --ant-soft:#46202A;
+  --sun:#F7C948; --leaf:#3CC47C; --on-accent:#0E131A; --on-sun:#2A1E00;
+  --good:#45CC85; --good-soft:#173A28; --bad:#FF9257; --bad-soft:#43271A;
+  --fig-bg:#1F2630; --fig-ink:#E9EDF3; --fig-grey:#5C687A;
+  --shadow:0 2px 0 rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.3);
+  color-scheme:dark; }
+
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:1.05rem; line-height:1.5}
+.app{max-width:42rem; margin:0 auto; padding-inline:16px; padding-block:20px 40px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit; cursor:pointer}
+button:focus-visible, .choice:focus-within{outline:3px solid var(--sun); outline-offset:3px}
+h1,h2,h3{font-family:var(--f-display); font-weight:400; margin:0; text-wrap:balance; letter-spacing:.01em}
+p{margin:0}
+
+/* Fridge-magnet title */
+.title{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; padding-block:6px}
+.title .gap{width:14px}
+.tile{font-family:var(--f-display); display:inline-grid; place-items:center; min-width:2.1em; height:2.3em; padding-inline:.25em; border-radius:10px; font-size:clamp(1.25rem, 5.6vw, 2.1rem); color:var(--on-accent); box-shadow:var(--shadow); transform:rotate(var(--r,0deg)); transition:transform .25s}
+.tile:hover{transform:rotate(0) translateY(-3px)}
+.t-red{background:var(--ant)} .t-blue{background:var(--syn)} .t-sun{background:var(--sun); color:var(--on-sun)} .t-leaf{background:var(--leaf)}
+.title.small .tile{font-size:1rem; height:2em; min-width:1.8em; border-radius:7px}
+.tagline{text-align:center; color:var(--muted); font-size:1.1rem}
+
+.card{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:20px; box-shadow:var(--shadow)}
+.label{font-size:.78rem; letter-spacing:.09em; text-transform:uppercase; font-weight:700; color:var(--muted)}
+
+/* Subject tabs */
+.tabs{display:grid; grid-template-columns:1fr 1fr; gap:6px; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:6px}
+.tab{border:none; background:none; border-radius:11px; padding:10px; font-family:var(--f-display); font-size:1.3rem; color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--bg)}
+.panel{display:flex; flex-direction:column; gap:20px}
+
+/* Explainers */
+.explain{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.ex{border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:6px; min-width:0}
+.ex.syn{background:var(--syn-soft)} .ex.ant{background:var(--ant-soft)} .ex.plain{background:var(--surface); border:1px solid var(--line)}
+.ex h3{font-size:1.35rem} .ex.syn h3{color:var(--syn)} .ex.ant h3{color:var(--ant)}
+.ex .pair{font-weight:700}
+.nvr-intro{display:flex; gap:16px; align-items:center}
+.nvr-intro .mini{flex:none; display:flex; gap:6px}
+.nvr-intro .mini svg{width:46px; height:46px}
+.nvr-intro p{min-width:0}
+
+/* Choices */
+.section{display:flex; flex-direction:column; gap:10px}
+.choices{display:grid; gap:10px}
+.choices.two{grid-template-columns:1fr 1fr}
+.choices.three{grid-template-columns:repeat(3,1fr)}
+.choice{position:relative; display:flex; flex-direction:column; gap:4px; border:2px solid var(--line); border-radius:14px; padding:12px 14px; background:var(--surface-2); cursor:pointer; min-width:0}
+.choice input{position:absolute; opacity:0; pointer-events:none}
+.choice b{font-family:var(--f-display); font-weight:400; font-size:1.2rem}
+.choice span{color:var(--muted); font-size:.9rem}
+.choice:has(input:checked){border-color:var(--syn); background:var(--syn-soft)}
+.choice .lvp{color:var(--good); font-weight:700; font-size:.85rem}
+.best{color:var(--muted); font-size:.95rem; text-align:center; font-variant-numeric:tabular-nums}
+
+.btn{border:none; border-radius:14px; padding:14px 22px; font-family:var(--f-display); font-size:1.3rem; letter-spacing:.02em; background:var(--leaf); color:var(--on-accent); box-shadow:0 4px 0 color-mix(in srgb, var(--leaf) 60%, black); transition:transform .1s, box-shadow .1s}
+.btn:active{transform:translateY(3px); box-shadow:0 1px 0 color-mix(in srgb, var(--leaf) 60%, black)}
+.btn.ghost{background:var(--surface-2); color:var(--ink); border:2px solid var(--line); box-shadow:none}
+.btn.blue{background:var(--syn); box-shadow:0 4px 0 color-mix(in srgb, var(--syn) 60%, black); font-size:1.1rem}
+.btn.wide{width:100%}
+.row{display:flex; gap:10px; flex-wrap:wrap}
+.row > *{flex:1 1 10rem}
+
+/* Progress */
+.progress{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; text-align:center}
+.pstat{background:var(--surface-2); border-radius:12px; padding:10px 6px; display:flex; flex-direction:column; gap:2px; min-width:0}
+.pstat b{font-family:var(--f-display); font-weight:400; font-size:1.9rem; line-height:1.1; font-variant-numeric:tabular-nums}
+.pstat b small{font-size:.55em; color:var(--muted)}
+.pstat span{font-size:.82rem; color:var(--muted)}
+.pstat.hot b{color:var(--bad)}
+.pnote{grid-column:1/-1; color:var(--muted); font-size:.92rem}
+
+/* HUD */
+.hud{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.stats{display:flex; gap:14px; font-variant-numeric:tabular-nums}
+.stat{display:flex; flex-direction:column; align-items:flex-end; line-height:1.1}
+.stat b{font-family:var(--f-display); font-weight:400; font-size:1.5rem}
+.track{display:grid; grid-template-columns:repeat(10,1fr); gap:5px}
+.seg{height:9px; border-radius:5px; background:var(--line)}
+.seg.ok{background:var(--good)} .seg.no{background:var(--bad)} .seg.now{background:var(--sun)}
+
+/* Question */
+.q{display:flex; flex-direction:column; gap:16px; text-align:center}
+.chip{align-self:center; font-weight:700; font-size:.8rem; letter-spacing:.1em; text-transform:uppercase; padding:5px 12px; border-radius:99px}
+.chip.syn{background:var(--syn-soft); color:var(--syn)} .chip.ant{background:var(--ant-soft); color:var(--ant)} .chip.mix{background:var(--surface-2); color:var(--muted)}
+.ask{font-size:1.1rem; color:var(--muted); text-wrap:balance}
+.target{font-family:var(--f-display); font-size:clamp(2.4rem, 11vw, 3.6rem); line-height:1; overflow-wrap:anywhere}
+.options{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.opt{display:flex; align-items:center; gap:10px; text-align:left; border:2px solid var(--line); background:var(--surface-2); border-radius:14px; padding:14px; font-size:1.2rem; font-weight:700; min-width:0; transition:transform .12s, background .2s, border-color .2s}
+.opt:hover:not(:disabled){transform:translateY(-2px); border-color:var(--muted)}
+.opt .k{flex:none; display:grid; place-items:center; width:1.7em; height:1.7em; border-radius:7px; background:var(--surface); border:1px solid var(--line); font-size:.8rem; color:var(--muted)}
+.opt .w{min-width:0; overflow-wrap:anywhere}
+.opt:disabled, .sopt:disabled{cursor:default}
+.right{background:var(--good-soft)!important; border-color:var(--good)!important}
+.wrong{background:var(--bad-soft)!important; border-color:var(--bad)!important}
+.fade{opacity:.5}
+
+/* Word pair */
+.magnets{display:flex; justify-content:center; align-items:center; gap:28px; padding-block:12px; transition:gap .45s cubic-bezier(.5,1.8,.5,1)}
+.mag{display:flex; border-radius:14px; box-shadow:var(--shadow); min-width:0; transition:transform .4s}
+.mag .word{background:var(--surface-2); border:2px solid var(--line); border-radius:14px; padding:14px 18px; font-family:var(--f-display); font-size:clamp(1.3rem, 6vw, 2rem); overflow-wrap:anywhere; min-width:0}
+.magnets.snap{gap:6px}
+.magnets.push .left{transform:translateX(-14px) rotate(-6deg)}
+.magnets.push .right{transform:translateX(14px) rotate(6deg)}
+.pairbtns{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.pb{border:none; border-radius:14px; padding:14px 10px; display:flex; flex-direction:column; gap:2px; align-items:center; color:var(--on-accent)}
+.pb b{font-family:var(--f-display); font-weight:400; font-size:1.4rem}
+.pb span{font-size:.92rem}
+.pb.att{background:var(--syn)} .pb.rep{background:var(--ant)}
+.pb:disabled{opacity:.45; cursor:default}
+.pb.picked{opacity:1; outline:3px solid var(--ink); outline-offset:2px}
+
+/* Shape puzzles */
+.fig{display:block; width:100%; height:auto}
+.fig .frame{fill:var(--fig-bg); stroke:var(--line); stroke-width:1.5}
+.sh{stroke:var(--fig-ink); stroke-width:2.5; stroke-linejoin:round}
+.fn{fill:var(--fig-bg)} .fs{fill:var(--fig-ink)} .fg{fill:var(--fig-grey)} .fh{fill:url(#hatch)}
+.dec{fill:var(--fig-ink); stroke:var(--fig-bg); stroke-width:1.5}
+.hbg{fill:var(--fig-bg)} .hl{stroke:var(--fig-ink); stroke-width:1.6}
+.mline{stroke:var(--ant); stroke-width:2.5; stroke-dasharray:6 5}
+.stem{display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:6px}
+.cell{width:clamp(48px, 13.5vw, 88px); display:flex; flex-direction:column; align-items:center; gap:4px}
+.qcell{aspect-ratio:1; max-width:100%; border:2.5px dashed var(--muted); border-radius:10px; display:grid; place-items:center; font-family:var(--f-display); font-size:2rem; color:var(--muted); width:clamp(48px, 13.5vw, 88px)}
+.pr{display:flex; align-items:center; gap:6px}
+.to{font-size:1.4rem; color:var(--muted)}
+.as{font-family:var(--f-display); color:var(--muted); font-size:1.1rem; padding-inline:6px}
+.code{font-family:var(--f-display); font-size:1.25rem; letter-spacing:.08em}
+.mirror{width:min(220px, 70%)}
+.mirror.tall{width:min(150px, 46%)}
+.sopts{display:grid; grid-template-columns:repeat(5,1fr); gap:8px}
+.sopt{display:flex; flex-direction:column; align-items:center; gap:4px; border:2px solid var(--line); background:var(--surface-2); border-radius:12px; padding:6px; min-width:0; transition:transform .12s, border-color .2s}
+.sopt:hover:not(:disabled){transform:translateY(-2px); border-color:var(--muted)}
+.sopt .lab{font-weight:700; color:var(--muted); font-size:.95rem}
+.sopt .codeopt{font-family:var(--f-display); font-size:1.6rem; letter-spacing:.08em; padding-block:10px}
+
+.toolbar{display:flex; justify-content:center}
+.hint{background:none; border:2px dashed var(--line); border-radius:99px; padding:6px 14px; color:var(--muted); font-size:.95rem}
+.hint:disabled{opacity:.5; cursor:default}
+
+.feedback{border-radius:14px; padding:14px 16px; display:flex; flex-direction:column; gap:8px; text-align:left}
+.feedback.good{background:var(--good-soft)} .feedback.bad{background:var(--bad-soft)} .feedback.info{background:var(--surface-2)}
+.feedback .head{font-family:var(--f-display); font-size:1.35rem}
+.feedback.good .head{color:var(--good)} .feedback.bad .head{color:var(--bad)}
+.sentence{font-style:italic; color:var(--muted)}
+.sentence strong{color:var(--ink); font-style:normal}
+.alsos{font-size:.95rem}
+
+/* End */
+.end{display:flex; flex-direction:column; gap:16px; text-align:center}
+.stars{display:flex; justify-content:center; gap:8px}
+.star{width:48px; height:48px}
+.star path{fill:var(--line)} .star.on path{fill:var(--sun)}
+.big{font-family:var(--f-display); font-size:3rem; line-height:1; font-variant-numeric:tabular-nums}
+.review{display:flex; flex-direction:column; gap:8px; text-align:left}
+.rv{border:1px solid var(--line); border-radius:12px; padding:10px 14px; display:grid; grid-template-columns:7.5rem 1fr; gap:4px 12px; background:var(--surface-2)}
+.rv .hw{font-family:var(--f-display); font-size:1.25rem; grid-row:span 2; align-self:center; overflow-wrap:anywhere}
+.rv .s{color:var(--syn); font-weight:700} .rv .a{color:var(--ant); font-weight:700}
+.rv span{min-width:0}
+.rv.one{grid-template-columns:1fr auto} .rv.one .hw{grid-row:auto}
+.rv .tip{grid-column:1/-1; color:var(--muted); font-size:.92rem}
+
+@media (max-width:480px){
+  .progress{grid-template-columns:repeat(2,1fr)}
+  .explain{grid-template-columns:1fr}
+  .choices.three, .choices.two.stack{grid-template-columns:1fr}
+  .options{grid-template-columns:1fr}
+  .magnets{gap:16px}
+  .sopts{grid-template-columns:repeat(3,1fr)}
+  .rv{grid-template-columns:1fr} .rv .hw{grid-row:auto}
+  .nvr-intro .mini{display:none}
+}
+@media (prefers-reduced-motion: reduce){ *{transition:none!important; animation:none!important} }
+</style>
+
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+      <rect width="6" height="6" class="hbg"/><line x1="0" y1="0" x2="0" y2="6" class="hl"/>
+    </pattern>
+  </defs>
+</svg>
+
+<div class="app" id="app">
+  <section id="start" class="section" style="gap:20px">
+    <div class="title" aria-label="Brain Magnets">
+      <span class="tile t-red" style="--r:-4deg">B</span><span class="tile t-sun" style="--r:3deg">R</span><span class="tile t-blue" style="--r:-2deg">A</span><span class="tile t-leaf" style="--r:5deg">I</span><span class="tile t-red" style="--r:-3deg">N</span>
+      <span class="gap"></span>
+      <span class="tile t-blue" style="--r:4deg">M</span><span class="tile t-red" style="--r:-3deg">A</span><span class="tile t-leaf" style="--r:2deg">G</span><span class="tile t-sun" style="--r:-5deg">N</span><span class="tile t-red" style="--r:3deg">E</span><span class="tile t-blue" style="--r:-2deg">T</span><span class="tile t-sun" style="--r:4deg">S</span>
+    </div>
+    <p class="tagline">Word puzzles and shape puzzles to stretch your brain.</p>
+
+    <div class="card section">
+      <span class="label">Your progress</span>
+      <div class="progress" id="progress"></div>
+      <div id="resumeBox" hidden><button class="btn blue wide" id="resume">Carry on</button></div>
+      <div class="toolbar"><button class="hint" id="reset">Reset progress</button></div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-words" aria-controls="panel-words" aria-selected="true">Words</button>
+      <button class="tab" role="tab" id="tab-shapes" aria-controls="panel-shapes" aria-selected="false">Shapes</button>
+    </div>
+
+    <div class="panel" id="panel-words" role="tabpanel" aria-labelledby="tab-words">
+      <div class="explain">
+        <div class="ex syn"><h3>Synonym</h3><p>A word with the <b>same</b> (or nearly the same) meaning.</p><p class="pair">happy &rarr; glad</p></div>
+        <div class="ex ant"><h3>Antonym</h3><p>A word with the <b>opposite</b> meaning.</p><p class="pair">happy &rarr; sad</p></div>
+      </div>
+      <div class="card section">
+        <span class="label">Pick a game</span>
+        <div class="choices two" role="radiogroup">
+          <label class="choice"><input type="radio" name="mode" id="mode-match" value="match" checked><b>Magnet Match</b><span>Find the synonym or antonym out of four words.</span></label>
+          <label class="choice"><input type="radio" name="mode" id="mode-pair" value="pair"><b>Same or Opposite?</b><span>Two words appear. Do they mean the same or the opposite?</span></label>
+        </div>
+        <span class="label" style="margin-top:6px">Pick a level</span>
+        <div class="choices three" role="radiogroup">
+          <label class="choice"><input type="radio" name="level" id="lv-1" value="1" checked><b>Warm-up</b><span>big, brave, remember</span><span class="lvp" id="lvp-1"></span></label>
+          <label class="choice"><input type="radio" name="level" id="lv-2" value="2"><b>Stretch</b><span>fragile, punctual, vanish</span><span class="lvp" id="lvp-2"></span></label>
+          <label class="choice"><input type="radio" name="level" id="lv-3" value="3"><b>Brain-buster</b><span>candid, tranquil, obstinate</span><span class="lvp" id="lvp-3"></span></label>
+        </div>
+        <p class="best" id="best-words"></p>
+        <button class="btn wide" id="play-words">Play 10 words</button>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-shapes" role="tabpanel" aria-labelledby="tab-shapes" hidden>
+      <div class="ex plain nvr-intro">
+        <div class="mini" id="nvrMini"></div>
+        <p><b>Non-verbal reasoning</b> means solving puzzles with shapes instead of words. Look closely at what changes: the shape, the shading, the dots, which way it points, and where things are.</p>
+      </div>
+      <div class="card section">
+        <span class="label">Pick a puzzle type</span>
+        <div class="choices two stack" role="radiogroup">
+          <label class="choice"><input type="radio" name="smode" id="sm-mixed" value="mixed" checked><b>Mixed bag</b><span>A bit of everything, like a real test.</span></label>
+          <label class="choice"><input type="radio" name="smode" id="sm-series" value="series"><b>What comes next?</b><span>Spot the pattern in a row of shapes.</span></label>
+          <label class="choice"><input type="radio" name="smode" id="sm-odd" value="odd"><b>Odd one out</b><span>Four shapes follow a rule. One doesn't.</span></label>
+          <label class="choice"><input type="radio" name="smode" id="sm-analogy" value="analogy"><b>Shape analogies</b><span>This is to that, as this is to what?</span></label>
+          <label class="choice"><input type="radio" name="smode" id="sm-flip" value="flip"><b>Flip &amp; turn</b><span>Mirror images and rotations.</span></label>
+          <label class="choice"><input type="radio" name="smode" id="sm-codes" value="codes"><b>Shape codes</b><span>Crack the letter code for each shape.</span></label>
+        </div>
+        <span class="label" style="margin-top:6px">Pick a level</span>
+        <div class="choices three" role="radiogroup">
+          <label class="choice"><input type="radio" name="slevel" id="slv-1" value="1" checked><b>Warm-up</b><span>One rule to spot</span></label>
+          <label class="choice"><input type="radio" name="slevel" id="slv-2" value="2"><b>Stretch</b><span>Two rules at once</span></label>
+          <label class="choice"><input type="radio" name="slevel" id="slv-3" value="3"><b>Brain-buster</b><span>Three rules, trickier shapes</span></label>
+        </div>
+        <p class="best" id="best-shapes"></p>
+        <button class="btn wide" id="play-shapes">Play 10 puzzles</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="game" class="section" hidden>
+    <div class="hud">
+      <div class="title small" aria-hidden="true"><span class="tile t-red" style="--r:-4deg">B</span><span class="tile t-blue" style="--r:3deg">M</span></div>
+      <div class="stats">
+        <div class="stat"><span class="label" id="qlabel">Word</span><b id="qn">1/10</b></div>
+        <div class="stat"><span class="label">Streak</span><b id="streak">0</b></div>
+        <div class="stat"><span class="label">Points</span><b id="score">0</b></div>
+      </div>
+    </div>
+    <div class="track" id="track"></div>
+    <div class="card q" id="qcard"></div>
+    <div class="row"><button class="btn ghost" id="quit">Back to menu</button></div>
+  </section>
+
+  <section id="end" class="card end" hidden></section>
+</div>
+
+<script>
+/* ================= Shared helpers ================= */
+const $ = id => document.getElementById(id);
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const rnd = n => Math.floor(Math.random()*n);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const clone = o => JSON.parse(JSON.stringify(o));
+const store = {
+  get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+const ROUND = 10;
+const LEVEL_NAMES = {1:'Warm-up', 2:'Stretch', 3:'Brain-buster'};
+const MODE_NAMES = {match:'Magnet Match', pair:'Same or Opposite?', mixed:'Mixed bag', series:'What comes next?', odd:'Odd one out', analogy:'Shape analogies', flip:'Flip & turn', codes:'Shape codes'};
+const CHEERS = ['Brilliant!', 'Spot on!', 'Yes!', 'Nailed it!', 'Superb!', 'Great thinking!'];
+
+/* ================= Words data ================= */
+// word | synonyms | antonyms | example sentence
+const RAW = {
+1:`happy|glad,cheerful,joyful|sad,miserable,gloomy|Mia felt happy when her team scored.
+big|huge,large,enormous|small,tiny,little|A big lorry rumbled down our road.
+fast|quick,rapid,speedy|slow,sluggish|The fast cheetah sprinted across the plain.
+begin|start,commence|finish,end|We will begin the test at nine o'clock.
+brave|courageous,fearless|cowardly,timid|The brave firefighter climbed the ladder.
+easy|simple,effortless|hard,difficult|The first puzzle was easy to solve.
+loud|noisy,deafening|quiet,silent|The loud drums made the windows rattle.
+old|ancient,aged|new,young|Grandad keeps an old bike in the shed.
+rich|wealthy,well-off|poor,penniless|The rich king lived in a golden palace.
+hot|boiling,scorching|cold,freezing|Don't touch the oven, it's hot!
+shut|close,seal|open|Please shut the gate so the dog can't escape.
+clever|smart,intelligent,bright|foolish,dim|The clever fox found a way into the henhouse.
+angry|cross,furious|calm,pleased|Dad was angry when the window got smashed.
+dirty|filthy,grubby|clean,spotless|His football boots were dirty after the match.
+true|correct,accurate|false,wrong|Is it true that an octopus has three hearts?
+build|construct,make|destroy,demolish|We are going to build a den in the woods.
+shout|yell,bellow|whisper,murmur|You don't need to shout, I can hear you.
+kind|caring,friendly,gentle|cruel,unkind,mean|It was kind of you to share your snack.
+full|packed,stuffed|empty|The bus was full, so we had to walk.
+remember|recall,recollect|forget|Did you remember to pack your PE kit?`,
+2:`generous|giving,charitable|selfish,mean|Our generous neighbour gave us her spare bike.
+famous|well-known,celebrated|unknown,obscure|The famous author signed copies of her book.
+ascend|climb,rise|descend,drop|The hikers began to ascend the steep mountain.
+fragile|delicate,breakable|sturdy,tough|Be careful, that vase is very fragile.
+accept|receive,agree to|refuse,reject|Will you accept my invitation to the party?
+frequent|regular,repeated|rare,occasional|We make frequent trips to the library.
+victory|win,triumph|defeat,loss|The team celebrated their victory in the cup final.
+expand|grow,swell|shrink,contract|A balloon will expand as you blow air into it.
+include|contain,involve|exclude,omit|Make sure you include a full stop at the end.
+permanent|lasting,everlasting|temporary,brief|The ink left a permanent stain on my shirt.
+modern|up-to-date,current|old-fashioned,outdated|The new school has modern computers in every class.
+genuine|real,authentic|fake,false|Is that a genuine dinosaur fossil?
+humble|modest,meek|proud,boastful|Even after winning, she stayed humble.
+ordinary|normal,usual,everyday|unusual,extraordinary|It looked like an ordinary box, but it was full of treasure.
+cautious|careful,wary|reckless,careless|Be cautious when crossing a busy road.
+vanish|disappear,fade|appear,emerge|The magician made the rabbit vanish.
+punctual|prompt,on time|late,tardy|Our coach likes us to be punctual for training.
+plentiful|abundant,ample|scarce,scant|Blackberries are plentiful in September.
+transparent|clear,see-through|opaque,cloudy|The jellyfish was almost transparent.
+complicated|complex,tricky|simple,straightforward|The Lego instructions were complicated.`,
+3:`candid|frank,honest|secretive,evasive|Thank you for your candid answer; now I know the truth.
+diligent|hard-working,industrious|lazy,idle|The diligent pupil checked every answer twice.
+feeble|weak,frail|strong,mighty|The kitten gave a feeble little cry.
+hostile|unfriendly,aggressive|friendly,welcoming|The guard dog looked hostile, so we kept away.
+inferior|lesser,second-rate|superior,first-rate|The cheap torch was inferior to the expensive one.
+meagre|scanty,paltry|lavish,bountiful|The explorers survived on a meagre supply of biscuits.
+obstinate|stubborn,headstrong|flexible,obliging|The obstinate donkey refused to move.
+tranquil|peaceful,serene|chaotic,turbulent|The lake was tranquil early in the morning.
+vivid|bright,brilliant|dull,drab|The parrot had vivid green and red feathers.
+elated|overjoyed,ecstatic|dejected,despondent|We were elated when school closed for snow.
+compulsory|mandatory,required|optional,voluntary|Wearing a helmet is compulsory at the skate park.
+conceal|hide,cover|reveal,expose|The spy tried to conceal the map in his boot.
+hinder|obstruct,hamper|assist,help|Heavy rain will hinder the search.
+hazardous|dangerous,risky|safe,harmless|Thin ice on the pond is hazardous.
+cumbersome|bulky,unwieldy|compact,manageable|The cumbersome suitcase wouldn't fit in the car.
+trivial|minor,unimportant|significant,crucial|Don't worry about such a trivial mistake.
+ravenous|starving,famished|full,satisfied|After football training, I was ravenous.
+frugal|thrifty,economical|wasteful,extravagant|Being frugal helped her save up for a new bike.
+fortunate|lucky,blessed|unlucky,ill-fated|We were fortunate that the rain stopped before the match.
+deteriorate|worsen,decline|improve,recover|Bread will deteriorate if you leave it out of the bag.`
+};
+const WORDS = {};
+for (const k in RAW) WORDS[k] = RAW[k].trim().split('\n').map(l => { const [w,s,a,x] = l.split('|'); return {w, syn:s.split(','), ant:a.split(','), s:x}; });
+
+/* ================= Saved progress ================= */
+const PKEY = 'wm-progress';
+const newP = () => ({day:{last:null, streak:0, best:0}, rounds:0, answered:0, correct:0, run:0, bestRun:0, words:{}, shapes:{tried:0, solved:0}, current:null});
+let P = Object.assign(newP(), store.get(PKEY) || {});
+const saveP = () => store.set(PKEY, P);
+const dateStr = d => d.toLocaleDateString('en-CA');
+const today = () => dateStr(new Date());
+const yesterday = () => { const d = new Date(); d.setDate(d.getDate() - 1); return dateStr(d); };
+const dayStreak = () => (P.day.last === today() || P.day.last === yesterday()) ? P.day.streak : 0;
+function markDay(){
+  const t = today();
+  if (P.day.last === t) return;
+  P.day.streak = P.day.last === yesterday() ? P.day.streak + 1 : 1;
+  P.day.last = t;
+  P.day.best = Math.max(P.day.best, P.day.streak);
+}
+const mastered = w => (P.words[w]?.c || 0) >= 2;
+const weight = e => { const s = P.words[e.w]; if (!s) return 3; if (s.c >= 2) return 1; return s.w > 0 ? 5 : 3; };
+function weightedPick(arr, n){
+  const pool = arr.slice(), out = [];
+  while (out.length < n && pool.length){
+    let r = Math.random() * pool.reduce((t,e) => t + weight(e), 0), i = 0;
+    for (; i < pool.length - 1; i++){ r -= weight(pool[i]); if (r < 0) break; }
+    out.push(pool.splice(i,1)[0]);
+  }
+  return out;
+}
+
+/* ================= Shape drawing ================= */
+const FILLS = ['none','solid','grey','hatch'];
+const FILL_NAME = {none:'white', solid:'black', grey:'grey', hatch:'striped'};
+const FCLS = {none:'fn', solid:'fs', grey:'fg', hatch:'fh'};
+const SHAPE_NAME = {3:'triangle',4:'square',5:'pentagon',6:'hexagon',7:'heptagon',8:'octagon',circle:'circle',star:'star',arrow:'arrow'};
+const CORNER = ['top left','top right','bottom right','bottom left'];
+const r1 = n => Math.round(n*10)/10;
+const norm = r => ((r % 360) + 360) % 360;
+const ARROW = [[0,-1],[.75,-.15],[.28,-.15],[.28,1],[-.28,1],[-.28,-.15],[-.75,-.15]];
+const STAR = Array.from({length:10}, (_,i) => { const a=(-90+i*36)*Math.PI/180, rr=i%2?.45:1; return [rr*Math.cos(a), rr*Math.sin(a)]; });
+function polyPts(k, cx, cy, r, rot){
+  const off = k===4 ? 45 : 0;
+  return Array.from({length:k}, (_,i) => { const a=(-90+rot+off+i*360/k)*Math.PI/180; return `${r1(cx+r*Math.cos(a))},${r1(cy+r*Math.sin(a))}`; }).join(' ');
+}
+function rotPts(pts, cx, cy, r, rot){
+  const a=rot*Math.PI/180, c=Math.cos(a), s=Math.sin(a);
+  return pts.map(([x,y]) => `${r1(cx+(x*c-y*s)*r)},${r1(cy+(x*s+y*c)*r)}`).join(' ');
+}
+function shapeEl(k, cx, cy, r, rot, fill){
+  const c = `class="sh ${FCLS[fill]}"`;
+  if (k==='circle') return `<circle ${c} cx="${cx}" cy="${cy}" r="${r}"/>`;
+  if (k==='arrow') return `<polygon ${c} points="${rotPts(ARROW,cx,cy,r,rot)}"/>`;
+  if (k==='star') return `<polygon ${c} points="${rotPts(STAR,cx,cy,r*1.1,rot)}"/>`;
+  return `<polygon ${c} points="${polyPts(k,cx,cy,r,rot)}"/>`;
+}
+// Standard figure: main shape, optional inner shape, a row of dots, optional corner square
+function figF(F){
+  let s = `<rect class="frame" x="1.5" y="1.5" width="97" height="97" rx="10"/>`;
+  s += shapeEl(F.k, 50, 46, 26, F.rot||0, F.fill);
+  if (F.in) s += shapeEl(F.in.k, 50, 46, 11, F.in.rot ?? F.rot ?? 0, F.in.fill);
+  for (let i=0;i<F.dots;i++) s += `<circle class="fs" cx="${r1(50+(i-(F.dots-1)/2)*10)}" cy="89" r="3.6"/>`;
+  if (F.mk >= 0){ const [x,y] = [[7,7],[83,7],[83,83],[7,83]][F.mk]; s += `<rect class="fs" x="${x}" y="${y}" width="10" height="10" rx="1.5"/>`; }
+  return `<svg class="fig" viewBox="0 0 100 100" aria-hidden="true">${s}</svg>`;
+}
+const keyF = F => JSON.stringify([F.k, F.k==='circle' ? 0 : norm(F.rot||0), F.fill, F.dots, F.mk, F.in ? [F.in.k, F.in.fill, F.k==='circle' ? 0 : norm(F.in.rot ?? F.rot ?? 0)] : 0]);
+const baseF = () => ({k:4, rot:0, fill:'none', dots:0, mk:-1, in:null});
+
+// Lopsided figures for flips and turns (drawn around 0,0)
+const BASES = [
+  [[-18,-30],[18,-16],[-10,-4],[-10,30],[-18,30]],
+  [[-20,-30],[-4,-30],[-4,12],[24,12],[24,28],[-20,28]],
+  [[-28,-8],[8,-8],[8,-24],[30,0],[8,24],[8,8],[-28,8]],
+  [[-26,-24],[2,-24],[2,-6],[26,-6],[26,26],[-6,26],[-6,8],[-26,8]],
+  [[-24,-28],[24,-28],[24,-12],[-6,-12],[-6,28],[-24,28]]
+];
+const M = {I:[1,0,0,1], R90:[0,-1,1,0], R180:[-1,0,0,-1], R270:[0,1,-1,0], MX:[-1,0,0,1], MY:[1,0,0,-1], MD:[0,1,1,0], MA:[0,-1,-1,0]};
+const DIRS = [[0,-1],[1,0],[0,1],[-1,0]];
+function triPts(d){
+  const [dx,dy] = DIRS[d.dir], px = -dy, py = dx;
+  return [[d.x+dx*7, d.y+dy*7], [d.x-dx*5+px*6, d.y-dy*5+py*6], [d.x-dx*5-px*6, d.y-dy*5-py*6]];
+}
+function gCanon(G, m){
+  const pts = G.base.map(p => ['b',...p]);
+  for (const d of G.decs){ if (d.t==='d') pts.push(['d', d.x, d.y]); else triPts(d).forEach(p => pts.push(['t',...p])); }
+  return pts.map(([t,x,y]) => `${t}${Math.round(m[0]*x+m[1]*y)},${Math.round(m[2]*x+m[3]*y)}`).sort().join('|');
+}
+function makeG(lv){
+  for (;;){
+    const G = {base: pick(BASES), fill: pick(['none','grey']), decs: []};
+    const spots = shuffle([-20,-10,0,10,20].flatMap(x => [-20,-10,0,10,20].map(y => [x,y]))).filter(([x,y]) => Math.abs(x)+Math.abs(y) > 0);
+    G.decs.push({t:'d', x:spots[0][0], y:spots[0][1]});
+    if (lv >= 2) G.decs.push({t:'r', x:spots[1][0], y:spots[1][1], dir:rnd(4)});
+    if (lv >= 3) G.decs.push({t:'d', x:spots[2][0], y:spots[2][1]});
+    if (new Set(Object.values(M).map(m => gCanon(G, m))).size === 8) return G;
+  }
+}
+function gGroup(G, m, cx=50, cy=50){
+  let s = `<polygon class="sh ${FCLS[G.fill]}" points="${G.base.map(p => p.join(',')).join(' ')}"/>`;
+  for (const d of G.decs){
+    s += d.t==='d' ? `<circle class="dec" cx="${d.x}" cy="${d.y}" r="5"/>` : `<polygon class="dec" points="${triPts(d).map(p => p.join(',')).join(' ')}"/>`;
+  }
+  return `<g transform="translate(${cx} ${cy}) matrix(${m[0]} ${m[2]} ${m[1]} ${m[3]} 0 0)">${s}</g>`;
+}
+const figG = (G, m) => `<svg class="fig" viewBox="0 0 100 100" aria-hidden="true"><rect class="frame" x="1.5" y="1.5" width="97" height="97" rx="10"/>${gGroup(G, m)}</svg>`;
+const qcell = `<div class="qcell" aria-label="missing shape">?</div>`;
+const cell = F => `<div class="cell">${figF(F)}</div>`;
+
+/* ================= Shape puzzle generators ================= */
+// Each returns {type, prompt, stem, opts:[html], correct, explain, hint, codeOpts?}
+function finishOpts(answerHTML, wrongHTMLs){
+  const opts = shuffle([answerHTML, ...wrongHTMLs]);
+  return {opts, correct: opts.indexOf(answerHTML)};
+}
+function pickDistractors(answer, pools, n=4){
+  const seen = new Set([keyF(answer)]), out = [];
+  for (const pool of pools) for (const F of shuffle(pool)){
+    if (out.length >= n) break;
+    const k = keyF(F); if (seen.has(k)) continue;
+    seen.add(k); out.push(F);
+  }
+  return out;
+}
+
+function genSeries(lv){
+  for (;;){
+    const rules = shuffle(['main','dots','fill','marker']).slice(0, lv);
+    const mainKind = pick(['arrow','sides']);
+    const base = baseF();
+    base.k = pick([4,5,6,'circle']); base.fill = pick(['none','grey','hatch']); base.dots = rnd(3);
+    base.mk = lv > 1 && Math.random() < .4 ? rnd(4) : -1;
+    const p = {r0:45*rnd(8), step:pick(lv===1 ? [90,-90] : [45,-45,90,-90]), dUp:Math.random()<.5, fills:shuffle(FILLS).slice(0,2), m0:rnd(4), mdir:pick([1,-1])};
+    const frame = (i, o={}) => {
+      const F = clone(base);
+      if (rules.includes('main')){
+        if (mainKind==='arrow'){ F.k='arrow'; F.rot = norm(p.r0 + (o.step ?? i*p.step)); }
+        else { F.k = o.k ?? 3+i; F.rot = 0; }
+      }
+      if (rules.includes('dots')) F.dots = o.dots ?? (p.dUp ? 1+i : 5-i);
+      if (rules.includes('fill')) F.fill = o.fill ?? p.fills[i%2];
+      if (rules.includes('marker')) F.mk = o.mk ?? (((p.m0 + i*p.mdir) % 4) + 4) % 4;
+      return F;
+    };
+    const ans = frame(4);
+    const singles = [];
+    for (const r of rules){
+      if (r==='main' && mainKind==='arrow') singles.push(frame(4,{step:3*p.step}), frame(4,{step:5*p.step}), frame(4,{step:4*p.step+180}));
+      if (r==='main' && mainKind==='sides') singles.push(frame(4,{k:6}), frame(4,{k:8}));
+      if (r==='dots') singles.push(frame(4,{dots:ans.dots+1}), frame(4,{dots:Math.max(0,ans.dots-1)}));
+      if (r==='fill') singles.push(frame(4,{fill:p.fills[1]}));
+      if (r==='marker') singles.push(frame(4,{mk:(ans.mk+2)%4}), frame(4,{mk:(ans.mk - p.mdir + 4)%4}));
+    }
+    const noise = [];
+    if (!rules.includes('fill')) noise.push(Object.assign(clone(ans), {fill: pick(FILLS.filter(f => f!==ans.fill))}));
+    if (!rules.includes('dots')) noise.push(Object.assign(clone(ans), {dots: ans.dots+1}));
+    if (!rules.includes('marker')) noise.push(Object.assign(clone(ans), {mk: ans.mk < 0 ? rnd(4) : -1}));
+    const combo = [];
+    for (let a=0;a<singles.length;a++) for (let b=a+1;b<singles.length;b++){
+      const F = clone(singles[a]), G = singles[b];
+      for (const k of ['k','rot','dots','fill','mk']) if (G[k] !== ans[k]) F[k] = G[k];
+      combo.push(F);
+    }
+    const wrong = pickDistractors(ans, [singles, combo, noise]);
+    if (wrong.length < 4) continue;
+    const {opts, correct} = finishOpts(figF(ans), wrong.map(figF));
+    const ex = [], hint = [];
+    for (const r of rules){
+      if (r==='main' && mainKind==='arrow'){
+        const a = Math.abs(p.step); ex.push(`The arrow turns ${a}° ${p.step>0?'clockwise':'anticlockwise'} each time${a===90?' (a quarter turn)':' (an eighth of a turn)'}.`); hint.push('which way the arrow points');
+      }
+      if (r==='main' && mainKind==='sides'){ ex.push('The shape gains one side each time: triangle, square, pentagon, hexagon… so next is a 7-sided heptagon.'); hint.push('the number of sides'); }
+      if (r==='dots'){ ex.push(`The dots go ${p.dUp?'up':'down'} by one each time.`); hint.push('the dots'); }
+      if (r==='fill'){ ex.push(`The shading swaps between ${FILL_NAME[p.fills[0]]} and ${FILL_NAME[p.fills[1]]}.`); hint.push('the shading'); }
+      if (r==='marker'){ ex.push(`The small square moves one corner ${p.mdir>0?'clockwise':'anticlockwise'} each time.`); hint.push('the small corner square'); }
+    }
+    return {type:'series', prompt:'Which shape comes next in the pattern?',
+      stem: [0,1,2,3].map(i => cell(frame(i))).join('') + qcell,
+      opts, correct, explain: ex.join(' '), hint: `Keep an eye on ${hint.join(' and ')}.`};
+  }
+}
+
+const oddFeats = F => ({k:F.k, fill:F.fill, dots:F.dots, mk:F.mk, ink:F.in?F.in.k:'-', same:F.in?String(F.in.k===F.k):'-', eq:String(F.dots===F.k), par:F.dots%2});
+function oddValid(figs, odd){
+  const fs = figs.map(oddFeats); let found = false;
+  for (const key of Object.keys(fs[0])) for (let i=0;i<5;i++){
+    const others = fs.filter((_,j) => j!==i).map(f => f[key]);
+    if (others.every(v => v===others[0]) && fs[i][key] !== others[0]){ if (i !== odd) return false; found = true; }
+  }
+  return found && new Set(figs.map(keyF)).size === 5;
+}
+function genOdd(lv){
+  const rule = pick(lv===1 ? ['sides','innerSame'] : lv===2 ? ['innerSame','dotsParity','chiral'] : ['dotsEq','chiral','innerSame']);
+  if (rule==='chiral'){
+    const G = makeG(lv);
+    const turns = shuffle(['I','R90','R180','R270']), flip = pick(['MX','MY','MD','MA']);
+    const ans = figG(G, M[flip]);
+    const {opts, correct} = finishOpts(ans, turns.map(t => figG(G, M[t])));
+    return {type:'odd', prompt:'Which shape is the odd one out?', stem:'', opts, correct,
+      explain:'The others are all the same shape, just turned round. The odd one out has been flipped over, so it is a mirror image.',
+      hint:'Imagine turning each shape round. Can you make them all match?'};
+  }
+  for (let t=0; t<500; t++){
+    const odd = rnd(5), common = pick([3,4,5,6]);
+    const oddK = pick([3,4,5,6,'circle'].filter(k => k!==common));
+    const figs = Array.from({length:5}, (_,i) => {
+      const isOdd = i===odd, F = baseF();
+      F.rot = lv===1 ? 15*rnd(4) : 15*rnd(24);
+      if (rule==='sides'){ F.k = isOdd ? oddK : common; F.fill = pick(FILLS); F.dots = rnd(4); F.mk = rnd(5)-1; }
+      if (rule==='innerSame'){
+        F.k = pick([3,4,5,6,'circle']); F.fill = pick(['none','grey','hatch']);
+        F.in = {k: isOdd ? pick([3,4,5,6,'circle'].filter(k => k!==F.k)) : F.k, fill:'solid', rot: lv===3 ? 15*rnd(24) : F.rot};
+        F.dots = rnd(3); F.mk = lv>1 ? rnd(5)-1 : -1;
+      }
+      if (rule==='dotsParity'){ F.k = pick([3,4,5,6,'circle','star']); F.fill = pick(FILLS); F.dots = isOdd ? pick([1,3,5]) : pick([2,4,6]); F.mk = rnd(5)-1; }
+      if (rule==='dotsEq'){ F.k = pick([3,4,5,6]); F.fill = pick(FILLS); F.dots = isOdd ? pick([F.k-1, F.k+1].filter(d => d>=2 && d<=6)) : F.k; }
+      return F;
+    });
+    if (!oddValid(figs, odd)) continue;
+    const ans = figF(figs[odd]);
+    const {opts, correct} = finishOpts(ans, figs.filter((_,i) => i!==odd).map(figF));
+    const ex = {
+      sides: `All the others are ${SHAPE_NAME[common]}s (some are turned round), but this one is a ${SHAPE_NAME[oddK]}.`,
+      innerSame: 'In the others, the small shape inside is the same kind of shape as the big one. In this one it is different.',
+      dotsParity: 'The others all have an even number of dots (2, 4 or 6). This one has an odd number.',
+      dotsEq: 'In the others, the number of dots matches the number of sides. In this one it doesn\'t.'
+    }[rule];
+    const hint = {sides:'Count the sides of the big shapes.', innerSame:'Compare the big shape with the small shape inside it.', dotsParity:'Count the dots on each one.', dotsEq:'Count the sides, then count the dots.'}[rule];
+    return {type:'odd', prompt:'Which shape is the odd one out?', stem:'', opts, correct, explain:ex, hint};
+  }
+  return genOdd(lv);
+}
+
+function genAnalogy(lv){
+  const conflicts = {rot:['swap','side'], swap:['rot','side'], side:['rot','swap']};
+  for (let t=0; t<300; t++){
+    const ts = [];
+    for (const x of shuffle(['rot','fill','swap','side','dots','mark'])){
+      if (ts.length >= lv) break;
+      if (ts.some(y => (conflicts[y]||[]).includes(x))) continue;
+      ts.push(x);
+    }
+    const p = {rot:pick([90,-90,180]), dd:pick([1,-1,2]), dm:pick([1,2,3])};
+    [p.from, p.to] = shuffle(FILLS);
+    const make = () => {
+      const F = baseF();
+      F.k = pick([3,4,5,6,'circle']); F.fill = pick(FILLS); F.dots = rnd(3);
+      if (ts.includes('rot')){ F.k = 'arrow'; F.rot = 90*rnd(4); }
+      if (ts.includes('side')) F.k = pick([3,4,5]);
+      if (ts.includes('fill')) F.fill = p.from;
+      if (ts.includes('swap')){
+        F.k = pick([3,4,5,6,'circle']);
+        F.in = {k: pick([3,4,5,6,'circle'].filter(k => k!==F.k)), fill: (F.fill==='solid' || (ts.includes('fill') && p.to==='solid')) ? 'none' : 'solid'};
+      }
+      if (ts.includes('dots')) F.dots = p.dd > 0 ? rnd(3) : 2 + rnd(3);
+      if (ts.includes('mark') || (lv>1 && Math.random()<.4)) F.mk = rnd(4);
+      return F;
+    };
+    const apply = (F, skip=null, alt={}) => {
+      const G = clone(F);
+      for (const x of ts){
+        if (x===skip) continue;
+        if (x==='rot') G.rot = norm(G.rot + (alt.rot ?? p.rot));
+        if (x==='fill') G.fill = alt.fill ?? p.to;
+        if (x==='swap'){ if (alt.half) G.k = G.in.k; else { const k=G.k; G.k=G.in.k; G.in.k=k; } }
+        if (x==='side') G.k = G.k + (alt.side ?? 1);
+        if (x==='dots') G.dots = Math.min(6, Math.max(0, G.dots + (alt.dd ?? p.dd)));
+        if (x==='mark') G.mk = (G.mk + (alt.dm ?? p.dm)) % 4;
+      }
+      return G;
+    };
+    const A = make(); let C = make(), guard = 0;
+    while ((keyF(C)===keyF(A) || C.k===A.k) && guard++ < 50) C = make();
+    const B = apply(A), ans = apply(C);
+    const rule = [];
+    for (const x of ts){
+      rule.push(apply(C, x));
+      if (x==='rot') rule.push(apply(C, null, {rot: p.rot===180 ? 90 : -p.rot}));
+      if (x==='fill') rule.push(apply(C, null, {fill: pick(FILLS.filter(f => f!==p.to && f!==p.from))}));
+      if (x==='swap') rule.push(apply(C, null, {half:true}));
+      if (x==='side') rule.push(apply(C, null, {side:2}));
+      if (x==='dots') rule.push(apply(C, null, {dd: p.dd+1}));
+      if (x==='mark') rule.push(apply(C, null, {dm: pick([1,2,3].filter(d => d!==p.dm))}));
+    }
+    const noise = [C];
+    if (!ts.includes('fill')) noise.push(Object.assign(clone(ans), {fill: pick(FILLS.filter(f => f!==ans.fill && !(ans.in && f===ans.in.fill)))}));
+    if (!ts.includes('dots')) noise.push(Object.assign(clone(ans), {dots: ans.dots+1}));
+    const wrong = pickDistractors(ans, [rule, noise]);
+    if (wrong.length < 4) continue;
+    const {opts, correct} = finishOpts(figF(ans), wrong.map(figF));
+    const say = {
+      rot: p.rot===180 ? 'The arrow turns halfway round (180°).' : `The arrow turns a quarter turn ${p.rot>0?'clockwise':'anticlockwise'}.`,
+      fill: `The shading changes from ${FILL_NAME[p.from]} to ${FILL_NAME[p.to]}.`,
+      swap: 'The big shape and the small shape inside swap places.',
+      side: 'The big shape gains one side.',
+      dots: {1:'One dot is added.', '-1':'One dot is taken away.', 2:'Two dots are added.'}[p.dd],
+      mark: {1:'The corner square moves one corner clockwise.', 2:'The corner square moves to the opposite corner.', 3:'The corner square moves one corner anticlockwise.'}[p.dm]
+    };
+    return {type:'analogy', prompt:'The first shape changes into the second by following a rule. Which shape does the third one change into using the same rule?',
+      stem:`<div class="pr">${cell(A)}<span class="to" aria-hidden="true">&rarr;</span>${cell(B)}</div><span class="as">as</span><div class="pr">${cell(C)}<span class="to" aria-hidden="true">&rarr;</span>${qcell}</div>`,
+      opts, correct, explain: ts.map(x => say[x]).join(' '),
+      hint:`Compare the first two shapes carefully. ${ts.length>1 ? `There are ${ts.length} changes to find.` : 'There is one change to find.'}`};
+  }
+}
+
+function genFlip(lv){
+  const G = makeG(lv);
+  const kind = lv===1 ? pick(['mirrorV','mirrorH']) : pick(['mirrorV','mirrorH','turn','turn']);
+  if (kind==='turn'){
+    const t = pick(['R90','R180','R270']);
+    const {opts, correct} = finishOpts(figG(G, M[t]), ['MX','MY','MD','MA'].map(m => figG(G, M[m])));
+    const how = {R90:'a quarter turn clockwise', R180:'a half turn', R270:'a quarter turn anticlockwise'}[t];
+    return {type:'flip', prompt:'Which shape is the first one <b>turned round</b>? (Turned, not flipped over.)',
+      stem:`<div class="cell">${figG(G, M.I)}</div>`, opts, correct,
+      explain:`The answer is the shape given ${how}. The other four are mirror images: you would have to flip them over to make them match.`,
+      hint:'Turning never swaps left and right. Check which side the dot is on as you turn it.'};
+  }
+  const v = kind==='mirrorV', ans = v ? 'MX' : 'MY';
+  const others = [ 'I', v ? 'MY' : 'MX', 'R180', pick(['R90','R270','MD','MA']) ];
+  const {opts, correct} = finishOpts(figG(G, M[ans]), others.map(m => figG(G, M[m])));
+  const stem = v
+    ? `<svg class="fig mirror" viewBox="0 0 140 100" aria-hidden="true"><rect class="frame" x="1.5" y="1.5" width="97" height="97" rx="10"/>${gGroup(G, M.I)}<line class="mline" x1="118" y1="4" x2="118" y2="96"/></svg>`
+    : `<svg class="fig mirror tall" viewBox="0 0 100 140" aria-hidden="true"><rect class="frame" x="1.5" y="1.5" width="97" height="97" rx="10"/>${gGroup(G, M.I)}<line class="mline" x1="4" y1="118" x2="96" y2="118"/></svg>`;
+  return {type:'flip', prompt:`Which shape is the <b>reflection</b> of this shape in the red dashed mirror line?`,
+    stem, opts, correct,
+    explain: v ? 'In a mirror line that goes up and down, left and right swap over, but top and bottom stay where they are.'
+               : 'In a mirror line that goes across, top and bottom swap over, but left and right stay where they are.',
+    hint: v ? 'Things on the left move to the right. Nothing moves up or down.' : 'Things at the top move to the bottom. Nothing moves left or right.'};
+}
+
+const CODE_ATTRS = {
+  shape:{name:'shape', vals:() => shuffle([3,4,5,6,'circle','star']).slice(0,2), set:(F,v) => { F.k=v; }, say:v => `a ${SHAPE_NAME[v]}`},
+  fill:{name:'shading', vals:() => shuffle(FILLS).slice(0,2), set:(F,v) => { F.fill=v; }, say:v => FILL_NAME[v]},
+  dots:{name:'number of dots', vals:() => shuffle([1,2,3]).slice(0,2), set:(F,v) => { F.dots=v; }, say:v => `${v} dot${v>1?'s':''}`},
+  mk:{name:'corner square', vals:() => shuffle([0,1,2,3]).slice(0,2), set:(F,v) => { F.mk=v; }, say:v => `${CORNER[v]}`}
+};
+const LETTERS = [['A','B','C'],['X','Y','Z'],['L','M','N']];
+const ORD = ['first','second','third'];
+function genCodes(lv){
+  const nA = lv===3 ? 3 : 2;
+  const part = col => { const m = new Map(); return col.map(v => { if (!m.has(v)) m.set(v, m.size); return m.get(v); }).join(''); };
+  for (let t=0; t<500; t++){
+    const keys = shuffle(Object.keys(CODE_ATTRS));
+    const coded = keys.slice(0, nA), noise = lv===2 ? keys[nA] : null;
+    const vals = coded.map(k => CODE_ATTRS[k].vals());
+    const letters = coded.map((_,p) => shuffle(LETTERS[p]));
+    const target = coded.map(() => rnd(2));
+    const combos = [];
+    for (let m=0; m<(1<<nA); m++){ const c = coded.map((_,p) => (m>>p)&1); if (c.join()!==target.join()) combos.push(c); }
+    const ex = shuffle(combos).slice(0, nA===2 ? 3 : 4);
+    if (!coded.every((_,p) => new Set(ex.map(c => c[p])).size===2)) continue;
+    const parts = coded.map((_,p) => part(ex.map(c => c[p])));
+    if (new Set(parts).size !== nA) continue;
+    const noiseVals = noise ? CODE_ATTRS[noise].vals() : null;
+    const noiseCol = noise ? ex.map(() => rnd(2)) : null;
+    if (noise && new Set(noiseCol).size > 1 && parts.includes(part(noiseCol))) continue;
+    const base = baseF(); base.k = pick([4,5,6,'circle']); base.fill = pick(['none','grey']);
+    const build = (c, nv) => { const F = clone(base); coded.forEach((k,p) => CODE_ATTRS[k].set(F, vals[p][c[p]])); if (noise) CODE_ATTRS[noise].set(F, noiseVals[nv]); return F; };
+    const code = c => c.map((v,p) => letters[p][v]).join('');
+    const right = code(target);
+    const cands = new Set();
+    coded.forEach((_,p) => { const c = target.slice(); c[p] = 1-c[p]; cands.add(code(c)); });
+    cands.add(code(target.map(v => 1-v)));
+    coded.forEach((_,p) => cands.add(target.map((v,q) => q===p ? letters[q][2] : letters[q][v]).join('')));
+    cands.delete(right);
+    const wrong = shuffle([...cands]).slice(0,4);
+    const html = s => `<span class="codeopt">${s}</span>`;
+    const {opts, correct} = finishOpts(html(right), wrong.map(html));
+    const explain = coded.map((k,p) => `The ${ORD[p]} letter is for the ${CODE_ATTRS[k].name}: ${letters[p][0]} means ${CODE_ATTRS[k].say(vals[p][0])} and ${letters[p][1]} means ${CODE_ATTRS[k].say(vals[p][1])}.`).join(' ')
+      + (noise ? ` The ${CODE_ATTRS[noise].name} is a trick: it doesn't change the code.` : '');
+    return {type:'codes', prompt:'Each letter stands for something about the shape. What is the code for the last shape?',
+      stem: ex.map(c => `<div class="cell">${figF(build(c, noise ? noiseCol[ex.indexOf(c)] : 0))}<span class="code">${code(c)}</span></div>`).join('')
+        + `<div class="cell">${figF(build(target, rnd(2)))}<span class="code">?</span></div>`,
+      opts, correct, explain, hint:'Find two shapes that share the same first letter. What else do they have in common?'};
+  }
+}
+
+const SHAPE_TYPES = ['series','odd','analogy','flip','codes'];
+const GEN = {series:genSeries, odd:genOdd, analogy:genAnalogy, flip:genFlip, codes:genCodes};
+function makeShapeQuestions(mode, lv){
+  const types = mode==='mixed' ? shuffle([...SHAPE_TYPES, ...SHAPE_TYPES]) : Array(ROUND).fill(mode);
+  return types.map(t => GEN[t](+lv));
+}
+
+/* ================= Words questions ================= */
+function makeWordQuestions(m, l){
+  const words = WORDS[l];
+  return weightedPick(words, ROUND).map(e => {
+    const kind = Math.random() < .5 ? 'syn' : 'ant';
+    if (m === 'pair') return {e, kind, partner: pick(e[kind])};
+    const correct = pick(e[kind]);
+    const trap = pick(kind === 'syn' ? e.ant : e.syn);
+    const others = shuffle(words.filter(x => x.w !== e.w && !e.syn.includes(x.w) && !e.ant.includes(x.w))).slice(0,2).map(x => x.w);
+    return {e, kind, correct, trap, options: shuffle([correct, trap, ...others])};
+  });
+}
+
+/* ================= Menu ================= */
+let tab = store.get('wm-tab') || 'words';
+const val = name => document.querySelector(`input[name=${name}]:checked`).value;
+const bestKey = (m,l) => `wm-best-${m}-${l}`;
+function setTab(t){
+  tab = t; store.set('wm-tab', t);
+  for (const x of ['words','shapes']){ $('tab-'+x).setAttribute('aria-selected', String(x===t)); $('panel-'+x).hidden = x!==t; }
+  showBest();
+}
+$('tab-words').addEventListener('click', () => setTab('words'));
+$('tab-shapes').addEventListener('click', () => setTab('shapes'));
+function showBest(){
+  const [m, l, el] = tab==='words' ? [val('mode'), val('level'), 'best-words'] : [val('smode'), val('slevel'), 'best-shapes'];
+  const b = store.get(bestKey(m, l));
+  $(el).textContent = b != null ? `Best for ${MODE_NAMES[m]}, ${LEVEL_NAMES[l]}: ${b} points` : `No score yet for ${MODE_NAMES[m]}, ${LEVEL_NAMES[l]}. Have a go!`;
+}
+document.querySelectorAll('input[type=radio]').forEach(i => i.addEventListener('change', showBest));
+
+function renderProgress(){
+  const all = Object.values(WORDS).flat();
+  const m = all.filter(e => mastered(e.w)).length;
+  const ds = dayStreak();
+  const note = ds === 0 ? 'Play today to start a day streak.'
+    : P.day.last === today() ? `You've played today. Best day streak: ${P.day.best}.`
+    : 'Play today to keep your day streak going!';
+  $('progress').innerHTML = `
+    <div class="pstat ${ds ? 'hot' : ''}"><b>${ds}</b><span>day streak</span></div>
+    <div class="pstat"><b>${P.run}</b><span>right in a row</span></div>
+    <div class="pstat"><b>${m}<small>/${all.length}</small></b><span>words mastered</span></div>
+    <div class="pstat"><b>${P.shapes.solved}</b><span>shape puzzles solved</span></div>
+    <p class="pnote">${note} ${P.rounds} round${P.rounds===1?'':'s'} played. A word is mastered when you get it right twice in a row.</p>`;
+  for (const l in WORDS) $('lvp-' + l).textContent = `${WORDS[l].filter(e => mastered(e.w)).length}/${WORDS[l].length} mastered`;
+  const c = P.current;
+  $('resumeBox').hidden = !c;
+  if (c){
+    const done = c.results.filter(x => x != null).length;
+    $('resume').textContent = `Carry on: ${MODE_NAMES[c.mode]}, ${LEVEL_NAMES[c.level]} (${done}/${ROUND} done)`;
+  }
+}
+// Little sample shapes beside the explainer
+$('nvrMini').innerHTML = figF({k:'arrow', rot:45, fill:'grey', dots:2, mk:-1, in:null}) + figF({k:5, rot:0, fill:'hatch', dots:0, mk:1, in:{k:5, fill:'solid'}});
+
+let armed = false, armTimer;
+$('reset').addEventListener('click', () => {
+  if (!armed){
+    armed = true; $('reset').textContent = 'Tap again to wipe all progress';
+    armTimer = setTimeout(() => { armed = false; $('reset').textContent = 'Reset progress'; }, 4000);
+    return;
+  }
+  clearTimeout(armTimer); armed = false; $('reset').textContent = 'Reset progress';
+  P = newP(); saveP();
+  for (const m of Object.keys(MODE_NAMES)) for (const l of ['1','2','3']) { try { localStorage.removeItem(bestKey(m,l)); } catch(e){} }
+  renderProgress(); showBest();
+});
+
+/* ================= Game flow ================= */
+let S = null;
+function start(subject){
+  const mode = subject==='words' ? val('mode') : val('smode');
+  const level = subject==='words' ? val('level') : val('slevel');
+  S = {subject, mode, level, i:0, score:0, streak:0, bestStreak:0, results:[], answered:false, hint:false,
+       qs: subject==='words' ? makeWordQuestions(mode, level) : makeShapeQuestions(mode, level)};
+  P.current = S; saveP();
+  showGame();
+}
+function showGame(){
+  $('start').hidden = true; $('end').hidden = true; $('game').hidden = false;
+  $('qlabel').textContent = S.subject==='words' ? 'Word' : 'Puzzle';
+  render();
+  window.scrollTo({top:0});
+}
+function resume(){
+  S = P.current; S.subject ||= 'words';
+  if (S.results[S.i] != null) S.i++;
+  if (S.i >= ROUND) return finish();
+  showGame();
+}
+$('resume').addEventListener('click', resume);
+$('play-words').addEventListener('click', () => start('words'));
+$('play-shapes').addEventListener('click', () => start('shapes'));
+
+function hud(){
+  $('qn').textContent = `${Math.min(S.i+1, ROUND)}/${ROUND}`;
+  $('score').textContent = S.score;
+  $('streak').textContent = P.run;
+  $('track').innerHTML = Array.from({length:ROUND}, (_,k) => {
+    const r = S.results[k];
+    return `<span class="seg ${r === true ? 'ok' : r === false ? 'no' : k === S.i ? 'now' : ''}"></span>`;
+  }).join('');
+}
+
+function sentenceHTML(e){
+  const re = new RegExp(`\\b(${e.w})\\b`, 'i');
+  return esc(e.s).replace(re, '<strong>$1</strong>');
+}
+
+const HINT_LABEL = 'Give me a clue (half points)';
+function render(){
+  hud();
+  const q = S.qs[S.i]; S.answered = false; S.hint = false;
+  const c = $('qcard');
+  if (S.subject === 'shapes'){
+    c.innerHTML = `
+      <span class="chip mix">${MODE_NAMES[q.type]}</span>
+      <p class="ask">${q.prompt}</p>
+      ${q.stem ? `<div class="stem">${q.stem}</div>` : ''}
+      <div class="sopts">${q.opts.map((o,k) => `<button class="sopt" data-i="${k}" aria-label="Option ${'abcde'[k]}">${o}<span class="lab">${'abcde'[k]}</span></button>`).join('')}</div>
+      <div class="toolbar"><button class="hint" id="hintBtn">${HINT_LABEL}</button></div>
+      <div id="fb"></div>`;
+    c.querySelectorAll('.sopt').forEach(b => b.addEventListener('click', () => answerShape(+b.dataset.i)));
+  } else if (S.mode === 'match'){
+    const isSyn = q.kind === 'syn';
+    c.innerHTML = `
+      <span class="chip ${q.kind}">${isSyn ? 'Find the synonym' : 'Find the antonym'}</span>
+      <p class="ask">${isSyn ? 'Which word means the <b>same</b> as' : 'Which word means the <b>opposite</b> of'}</p>
+      <div class="target">${esc(q.e.w)}</div>
+      <div class="options">${q.options.map((o,k) => `<button class="opt" data-w="${esc(o)}"><span class="k">${k+1}</span><span class="w">${esc(o)}</span></button>`).join('')}</div>
+      <div class="toolbar"><button class="hint" id="hintBtn">Show me it in a sentence (half points)</button></div>
+      <div id="fb"></div>`;
+    c.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => answerMatch(b.dataset.w)));
+  } else {
+    c.innerHTML = `
+      <span class="chip mix">Same or opposite?</span>
+      <p class="ask">Do these two words mean the <b>same</b> or the <b>opposite</b>?</p>
+      <div class="magnets" id="mags">
+        <div class="mag left"><span class="word">${esc(q.e.w)}</span></div>
+        <div class="mag right"><span class="word">${esc(q.partner)}</span></div>
+      </div>
+      <div class="pairbtns">
+        <button class="pb att" data-k="syn"><b>Same</b><span>Synonyms (S)</span></button>
+        <button class="pb rep" data-k="ant"><b>Opposite</b><span>Antonyms (O)</span></button>
+      </div>
+      <div class="toolbar"><button class="hint" id="hintBtn">Show me it in a sentence (half points)</button></div>
+      <div id="fb"></div>`;
+    c.querySelectorAll('.pb').forEach(b => b.addEventListener('click', () => answerPair(b.dataset.k)));
+  }
+  $('hintBtn').addEventListener('click', useHint);
+}
+
+function useHint(){
+  if (S.answered) return;
+  S.hint = true;
+  $('hintBtn').disabled = true;
+  const q = S.qs[S.i];
+  $('fb').innerHTML = S.subject==='shapes'
+    ? `<div class="feedback info"><p><b>Clue:</b> ${q.hint}</p></div>`
+    : `<div class="feedback info"><p class="sentence">${sentenceHTML(q.e)}</p></div>`;
+}
+
+function record(ok){
+  S.answered = true;
+  S.results[S.i] = ok;
+  if (ok){ S.score += S.hint ? 5 : 10; S.streak++; S.bestStreak = Math.max(S.bestStreak, S.streak); }
+  else S.streak = 0;
+  if (S.subject==='words'){
+    const ws = P.words[S.qs[S.i].e.w] ||= {c:0, r:0, w:0};
+    if (ok){ ws.c++; ws.r++; } else { ws.c = 0; ws.w++; }
+  } else {
+    P.shapes.tried++; if (ok) P.shapes.solved++;
+  }
+  if (ok){ P.correct++; P.run++; P.bestRun = Math.max(P.bestRun, P.run); } else P.run = 0;
+  P.answered++; markDay(); P.current = S; saveP();
+  hud();
+  $('hintBtn').disabled = true;
+}
+
+function showFeedback(ok, head, body){
+  const last = S.i === ROUND - 1;
+  $('fb').innerHTML = `<div class="feedback ${ok ? 'good' : 'bad'}"><p class="head">${head}</p>${body}</div>
+    <button class="btn wide" id="next" style="margin-top:12px">${last ? 'See my score' : S.subject==='words' ? 'Next word' : 'Next puzzle'}</button>`;
+  $('next').addEventListener('click', next);
+  $('next').focus({preventScroll:true});
+  $('next').scrollIntoView({block:'nearest', behavior:'smooth'});
+}
+function wordExtras(e){
+  return `<p class="sentence">${sentenceHTML(e)}</p>
+    <p class="alsos"><span style="color:var(--syn);font-weight:700">Synonyms:</span> ${e.syn.map(esc).join(', ')} &nbsp;·&nbsp; <span style="color:var(--ant);font-weight:700">Antonyms:</span> ${e.ant.map(esc).join(', ')}</p>`;
+}
+
+function answerMatch(w){
+  if (S.answered) return;
+  const q = S.qs[S.i], ok = w === q.correct, e = q.e;
+  record(ok);
+  $('qcard').querySelectorAll('.opt').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.w === q.correct) b.classList.add('right');
+    else if (b.dataset.w === w) b.classList.add('wrong');
+    else b.classList.add('fade');
+  });
+  const rel = q.kind === 'syn' ? 'means the same as' : 'means the opposite of';
+  let head, body;
+  if (ok){ head = pick(CHEERS); body = `<b>${esc(w)}</b> ${rel} <b>${esc(e.w)}</b>.`; }
+  else {
+    head = 'Not quite';
+    const why = w === q.trap
+      ? `<b>${esc(w)}</b> is a sneaky one: it's ${q.kind === 'syn' ? 'an <b>antonym</b>, the opposite' : 'a <b>synonym</b>, the same meaning'}.`
+      : `<b>${esc(w)}</b> isn't linked to <b>${esc(e.w)}</b>.`;
+    body = `${why} The answer was <b>${esc(q.correct)}</b>, which ${rel} <b>${esc(e.w)}</b>.`;
+  }
+  showFeedback(ok, head, `<p>${body}</p>${wordExtras(e)}`);
+}
+
+function answerPair(k){
+  if (S.answered) return;
+  const q = S.qs[S.i], ok = k === q.kind, e = q.e;
+  record(ok);
+  $('qcard').querySelectorAll('.pb').forEach(b => { b.disabled = true; if (b.dataset.k === k) b.classList.add('picked'); });
+  $('mags').classList.add(q.kind === 'syn' ? 'snap' : 'push');
+  const truth = q.kind === 'syn'
+    ? `<b>${esc(e.w)}</b> and <b>${esc(q.partner)}</b> are <b>synonyms</b>. They mean the same.`
+    : `<b>${esc(e.w)}</b> and <b>${esc(q.partner)}</b> are <b>antonyms</b>. They mean the opposite.`;
+  showFeedback(ok, ok ? pick(CHEERS) : 'Not quite', `<p>${truth}</p>${wordExtras(e)}`);
+}
+
+function answerShape(i){
+  if (S.answered) return;
+  const q = S.qs[S.i], ok = i === q.correct;
+  record(ok);
+  $('qcard').querySelectorAll('.sopt').forEach((b,k) => {
+    b.disabled = true;
+    if (k === q.correct) b.classList.add('right');
+    else if (k === i) b.classList.add('wrong');
+    else b.classList.add('fade');
+  });
+  showFeedback(ok, ok ? pick(CHEERS) : `Not quite. It was ${'abcde'[q.correct]}.`, `<p>${q.explain}</p>`);
+}
+
+function next(){
+  S.i++;
+  if (S.i >= ROUND) return finish();
+  P.current = S; saveP();
+  render();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+const TYPE_TIPS = {
+  series:'Check one thing at a time: the shape, then the shading, then the dots, then the corners.',
+  odd:'Find what four of them share. Count sides and dots, and compare shapes inside shapes.',
+  analogy:'List every change from the first shape to the second, then make the same changes.',
+  flip:'A mirror swaps one direction. A turn never makes a mirror image.',
+  codes:'Match up shapes that share a letter, then spot what else they share.'
+};
+function finish(){
+  $('game').hidden = true; $('start').hidden = true;
+  P.rounds++; P.current = null; saveP();
+  const correct = S.results.filter(Boolean).length;
+  const stars = correct >= 10 ? 3 : correct >= 7 ? 2 : correct >= 4 ? 1 : 0;
+  const key = bestKey(S.mode, S.level);
+  const prev = store.get(key);
+  const newBest = prev == null || S.score > prev;
+  if (newBest) store.set(key, S.score);
+  const msg = ['Keep practising, it gets easier every round!', 'Good start! Try again to beat it.', 'Great work, nearly there!', 'Perfect round! Brilliant thinking.'][stars];
+  const starSVG = on => `<svg class="star ${on ? 'on' : ''}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg>`;
+  let review = '';
+  if (S.subject === 'words'){
+    const missed = S.qs.filter((q,k) => S.results[k] === false).map(q => q.e);
+    if (missed.length) review = `<div class="review"><span class="label">Words to practise</span>${missed.map(e => `
+      <div class="rv"><span class="hw">${esc(e.w)}</span><span><span class="s">Same:</span> ${e.syn.map(esc).join(', ')}</span><span><span class="a">Opposite:</span> ${e.ant.map(esc).join(', ')}</span></div>`).join('')}</div>`;
+  } else {
+    const tally = {};
+    S.qs.forEach((q,k) => { const t = tally[q.type] ||= {r:0, n:0}; t.n++; if (S.results[k]) t.r++; });
+    review = `<div class="review"><span class="label">How each puzzle type went</span>${Object.entries(tally).map(([t,v]) => `
+      <div class="rv one"><span class="hw">${MODE_NAMES[t]}</span><span><b>${v.r}</b> of ${v.n}</span>${v.r < v.n ? `<span class="tip">Tip: ${TYPE_TIPS[t]}</span>` : ''}</div>`).join('')}</div>`;
+  }
+  $('end').innerHTML = `
+    <span class="label">${MODE_NAMES[S.mode]} · ${LEVEL_NAMES[S.level]}</span>
+    <div class="stars" aria-label="${stars} out of 3 stars">${[0,1,2].map(i => starSVG(i < stars)).join('')}</div>
+    <div class="big">${S.score} points</div>
+    <p>${correct} out of ${ROUND} correct · ${dayStreak()} day streak${newBest ? ' · <b>New best!</b>' : ''}</p>
+    <p class="tagline">${msg}</p>
+    ${review}
+    <div class="row"><button class="btn" id="again">Play again</button><button class="btn ghost" id="menu">Back to menu</button></div>`;
+  $('end').hidden = false;
+  const subj = S.subject;
+  $('again').addEventListener('click', () => start(subj));
+  $('menu').addEventListener('click', menu);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function menu(){
+  $('game').hidden = true; $('end').hidden = true; $('start').hidden = false;
+  showBest(); renderProgress();
+}
+$('quit').addEventListener('click', menu);
+
+document.addEventListener('keydown', ev => {
+  if ($('game').hidden || !S || S.answered || ev.metaKey || ev.ctrlKey || ev.altKey) return;
+  const k = ev.key.toLowerCase();
+  if (S.subject === 'shapes'){
+    const i = '12345'.includes(k) && k.length===1 ? +k-1 : 'abcde'.indexOf(k);
+    if (i >= 0 && k.length===1){ const b = $('qcard').querySelectorAll('.sopt')[i]; if (b) b.click(); }
+  } else if (S.mode === 'match' && /^[1-4]$/.test(k)){
+    const b = $('qcard').querySelectorAll('.opt')[+k - 1];
+    if (b) b.click();
+  } else if (S.mode === 'pair'){
+    if (k === 's') answerPair('syn');
+    if (k === 'o') answerPair('ant');
+  }
+});
+
+setTab(tab === 'shapes' ? 'shapes' : 'words');
+renderProgress();
+</script>
+
+<script>
+if ("serviceWorker" in navigator) { window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {})); }
+</script>
+</body>
+</html>
