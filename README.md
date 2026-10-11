@@ -2,7 +2,7 @@
 
 Word puzzles and non-verbal reasoning puzzles for a 10-year-old.
 
-- **Words:** synonym and antonym games across three levels (60 headwords).
+- **Words:** synonym and antonym games (Magnet Match, Same or Opposite?, Pick a Pair, Missing Letters, Odd Ones Out, Hidden Words) across three levels (60 headwords).
 - **Shapes:** 11+ style non-verbal reasoning (what comes next, odd one out, analogies, flip & turn, codes), generated on the fly.
 - Progress (day streak, answer streak, words mastered, puzzles solved) is saved in the browser's localStorage.
 - Installable as an app and works offline.

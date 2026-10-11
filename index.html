@@ -98,6 +98,7 @@ p{margin:0}
 .choice span{color:var(--muted); font-size:.9rem}
 .choice:has(input:checked){border-color:var(--syn); background:var(--syn-soft)}
 .choice .lvp{color:var(--good); font-weight:700; font-size:.85rem}
+.choices.two > .choice:last-child:nth-child(odd){grid-column:1/-1}
 .best{color:var(--muted); font-size:.95rem; text-align:center; font-variant-numeric:tabular-nums}
 
 .btn{border:none; border-radius:14px; padding:14px 22px; font-family:var(--f-display); font-size:1.3rem; letter-spacing:.02em; background:var(--leaf); color:var(--on-accent); box-shadow:0 4px 0 color-mix(in srgb, var(--leaf) 60%, black); transition:transform .1s, box-shadow .1s}
@@ -156,6 +157,23 @@ p{margin:0}
 .pb.att{background:var(--syn)} .pb.rep{background:var(--ant)}
 .pb:disabled{opacity:.45; cursor:default}
 .pb.picked{opacity:1; outline:3px solid var(--ink); outline-offset:2px}
+
+/* Pick a pair, odd ones out, missing letters */
+.btn:disabled{opacity:.5; cursor:default}
+.opt.c{justify-content:center; text-align:center}
+.opt.sel{border-color:var(--syn); background:var(--syn-soft)}
+.groups{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.grp{display:flex; flex-direction:column; gap:8px; padding:10px; border:2px dashed var(--line); border-radius:16px; min-width:0}
+.options.five .opt:last-child{grid-column:1/-1}
+.slots{display:flex; justify-content:center; gap:4px}
+.slot{flex:0 1 2.3rem; min-width:0; height:2.8rem; display:grid; place-items:center; border:2px solid var(--line); border-radius:9px; background:var(--surface-2); font-family:var(--f-display); font-size:clamp(1.05rem, 5vw, 1.6rem)}
+.slot.blank{border-style:dashed; border-color:var(--syn); background:var(--surface); color:var(--syn)}
+.typerow{display:flex; gap:10px}
+.typein{flex:1; min-width:0; font:inherit; font-size:1.3rem; letter-spacing:.15em; padding:12px 14px; border:2px solid var(--line); border-radius:14px; background:var(--surface); color:var(--ink)}
+.typein:focus{outline:3px solid var(--sun); outline-offset:2px}
+.hsent{font-size:clamp(1.25rem, 5vw, 1.6rem); font-weight:700; line-height:1.6; text-wrap:balance}
+mark{background:var(--sun); color:var(--on-sun); border-radius:4px; padding-inline:1px}
+.typein::placeholder{letter-spacing:normal; color:var(--muted)}
 
 /* Shape puzzles */
 .fig{display:block; width:100%; height:auto}
@@ -260,6 +278,10 @@ p{margin:0}
         <div class="choices two" role="radiogroup">
           <label class="choice"><input type="radio" name="mode" id="mode-match" value="match" checked><b>Magnet Match</b><span>Find the synonym or antonym out of four words.</span></label>
           <label class="choice"><input type="radio" name="mode" id="mode-pair" value="pair"><b>Same or Opposite?</b><span>Two words appear. Do they mean the same or the opposite?</span></label>
+          <label class="choice"><input type="radio" name="mode" id="mode-groups" value="groups"><b>Pick a Pair</b><span>Choose one word from each group to make a matching pair.</span></label>
+          <label class="choice"><input type="radio" name="mode" id="mode-letters" value="letters"><b>Missing Letters</b><span>Fill in the gaps to spell a synonym or antonym.</span></label>
+          <label class="choice"><input type="radio" name="mode" id="mode-oddwords" value="oddwords"><b>Odd Ones Out</b><span>Three words go together. Find the two that don't.</span></label>
+          <label class="choice"><input type="radio" name="mode" id="mode-hidden" value="hidden"><b>Hidden Words</b><span>A four-letter word hides across two words in a sentence.</span></label>
         </div>
         <span class="label" style="margin-top:6px">Pick a level</span>
         <div class="choices three" role="radiogroup">
@@ -330,7 +352,7 @@ const store = {
 };
 const ROUND = 10;
 const LEVEL_NAMES = {1:'Warm-up', 2:'Stretch', 3:'Brain-buster'};
-const MODE_NAMES = {match:'Magnet Match', pair:'Same or Opposite?', mixed:'Mixed bag', series:'What comes next?', odd:'Odd one out', analogy:'Shape analogies', flip:'Flip & turn', codes:'Shape codes'};
+const MODE_NAMES = {match:'Magnet Match', pair:'Same or Opposite?', groups:'Pick a Pair', letters:'Missing Letters', oddwords:'Odd Ones Out', hidden:'Hidden Words', mixed:'Mixed bag', series:'What comes next?', odd:'Odd one out', analogy:'Shape analogies', flip:'Flip & turn', codes:'Shape codes'};
 const CHEERS = ['Brilliant!', 'Spot on!', 'Yes!', 'Nailed it!', 'Superb!', 'Great thinking!'];
 
 /* ================= Words data ================= */
@@ -343,36 +365,36 @@ begin|start,commence|finish,end|We will begin the test at nine o'clock.
 brave|courageous,fearless|cowardly,timid|The brave firefighter climbed the ladder.
 easy|simple,effortless|hard,difficult|The first puzzle was easy to solve.
 loud|noisy,deafening|quiet,silent|The loud drums made the windows rattle.
-old|ancient,aged|new,young|Grandad keeps an old bike in the shed.
+old|aged,elderly|young,youthful|My great-gran is very old, but she still loves to dance.
 rich|wealthy,well-off|poor,penniless|The rich king lived in a golden palace.
-hot|boiling,scorching|cold,freezing|Don't touch the oven, it's hot!
-shut|close,seal|open|Please shut the gate so the dog can't escape.
+hot|boiling,scorching|cold,freezing|Don't touch the oven because it's hot!
+shut|close,fasten|open|Please shut the gate so the dog can't escape.
 clever|smart,intelligent,bright|foolish,dim|The clever fox found a way into the henhouse.
-angry|cross,furious|calm,pleased|Dad was angry when the window got smashed.
+angry|cross,furious|calm,relaxed|Dad was angry when the window got smashed.
 dirty|filthy,grubby|clean,spotless|His football boots were dirty after the match.
 true|correct,accurate|false,wrong|Is it true that an octopus has three hearts?
 build|construct,make|destroy,demolish|We are going to build a den in the woods.
-shout|yell,bellow|whisper,murmur|You don't need to shout, I can hear you.
-kind|caring,friendly,gentle|cruel,unkind,mean|It was kind of you to share your snack.
+shout|yell,bellow|whisper,murmur|You don't need to shout because I can hear you.
+kind|caring,friendly,thoughtful|cruel,unkind,mean|It was kind of you to share your snack.
 full|packed,stuffed|empty|The bus was full, so we had to walk.
 remember|recall,recollect|forget|Did you remember to pack your PE kit?`,
 2:`generous|giving,charitable|selfish,mean|Our generous neighbour gave us her spare bike.
 famous|well-known,celebrated|unknown,obscure|The famous author signed copies of her book.
-ascend|climb,rise|descend,drop|The hikers began to ascend the steep mountain.
+ascend|climb,rise|descend,fall|The hikers began to ascend the steep mountain.
 fragile|delicate,breakable|sturdy,tough|Be careful, that vase is very fragile.
-accept|receive,agree to|refuse,reject|Will you accept my invitation to the party?
+accept|receive,take|refuse,reject|Please accept this small gift.
 frequent|regular,repeated|rare,occasional|We make frequent trips to the library.
 victory|win,triumph|defeat,loss|The team celebrated their victory in the cup final.
 expand|grow,swell|shrink,contract|A balloon will expand as you blow air into it.
-include|contain,involve|exclude,omit|Make sure you include a full stop at the end.
+include|contain,cover|exclude,omit|The price will include breakfast and lunch.
 permanent|lasting,everlasting|temporary,brief|The ink left a permanent stain on my shirt.
 modern|up-to-date,current|old-fashioned,outdated|The new school has modern computers in every class.
 genuine|real,authentic|fake,false|Is that a genuine dinosaur fossil?
-humble|modest,meek|proud,boastful|Even after winning, she stayed humble.
+humble|modest,unassuming|proud,boastful|Even after winning, she stayed humble.
 ordinary|normal,usual,everyday|unusual,extraordinary|It looked like an ordinary box, but it was full of treasure.
 cautious|careful,wary|reckless,careless|Be cautious when crossing a busy road.
-vanish|disappear,fade|appear,emerge|The magician made the rabbit vanish.
-punctual|prompt,on time|late,tardy|Our coach likes us to be punctual for training.
+vanish|disappear,evaporate|appear,emerge|The magician made the rabbit vanish.
+punctual|prompt,on time|late,unpunctual|Our coach likes us to be punctual for training.
 plentiful|abundant,ample|scarce,scant|Blackberries are plentiful in September.
 transparent|clear,see-through|opaque,cloudy|The jellyfish was almost transparent.
 complicated|complex,tricky|simple,straightforward|The Lego instructions were complicated.`,
@@ -387,7 +409,7 @@ tranquil|peaceful,serene|chaotic,turbulent|The lake was tranquil early in the mo
 vivid|bright,brilliant|dull,drab|The parrot had vivid green and red feathers.
 elated|overjoyed,ecstatic|dejected,despondent|We were elated when school closed for snow.
 compulsory|mandatory,required|optional,voluntary|Wearing a helmet is compulsory at the skate park.
-conceal|hide,cover|reveal,expose|The spy tried to conceal the map in his boot.
+conceal|hide,stash|reveal,expose|The spy tried to conceal the map in his boot.
 hinder|obstruct,hamper|assist,help|Heavy rain will hinder the search.
 hazardous|dangerous,risky|safe,harmless|Thin ice on the pond is hazardous.
 cumbersome|bulky,unwieldy|compact,manageable|The cumbersome suitcase wouldn't fit in the car.
@@ -399,6 +421,56 @@ deteriorate|worsen,decline|improve,recover|Bread will deteriorate if you leave i
 };
 const WORDS = {};
 for (const k in RAW) WORDS[k] = RAW[k].trim().split('\n').map(l => { const [w,s,a,x] = l.split('|'); return {w, syn:s.split(','), ant:a.split(','), s:x}; });
+
+// sentence | four-letter word hidden across the end of one word and the start of the next
+// Checked so no other everyday word hides across a word boundary in the same sentence.
+const HIDDEN_RAW = {
+1:`We had fish and chips at the seaside.|hand
+The boys took their bats and balls.|sand
+Tom ate a big red apple.|mate
+I had a bath early today.|hear
+We sleep early on Sundays.|pear
+The cat entered the kitchen quietly.|tent
+Our dogs eat their dinner fast.|seat
+Jacob earned ten pounds.|bear
+I made errors in my sums.|deer
+Each insect has six legs.|chin
+You must go at once, said Mum.|goat
+The hippo stood in a muddy pool.|post`,
+2:`Please pass the rope over.|hero
+These enormous waves crashed on the beach.|seen
+Some animals hibernate in winter.|mean
+Dad drew and painted a dragon.|wand
+Paula needed warmer boots.|lane
+Beth invited six friends.|thin
+Roger might be late today.|germ
+Ted overslept on Monday.|dove
+Ali met Sophie at the zoo.|lime
+Lynne arrived just in time.|near
+Bruno tested the brakes on his bike.|note
+Nikki teased Ben all day.|kite`,
+3:`The hungry bear nibbled juicy berries.|earn
+Hugo ventured towards the cave.|oven
+Our pet earwig escaped.|tear
+Helen sang a beautiful song.|lens
+Thomas wandered through the woods.|swan
+The pup lumbered across the garden.|plum
+Big Nathan scored a goal.|gnat
+Some nights the owls screech.|omen
+Beth awoke at sunrise.|thaw
+Elvis leaned against the wall.|isle`
+};
+const letters = t => t.toLowerCase().replace(/[^a-z]/g, '');
+// Where the word hides: word index i, taking k letters from its end and the rest from word i+1
+function hiddenAt(s, h){
+  const ws = s.split(' ').map(letters), at = [];
+  for (let i = 0; i < ws.length - 1; i++)
+    for (let k = 1; k < h.length; k++)
+      if (ws[i].endsWith(h.slice(0, k)) && ws[i+1].startsWith(h.slice(k))) at.push({i, k});
+  return at;
+}
+const HIDDEN = {};
+for (const k in HIDDEN_RAW) HIDDEN[k] = HIDDEN_RAW[k].trim().split('\n').map(l => { const [s, h] = l.split('|'); return {s, h, at: hiddenAt(s, h)[0]}; });
 
 /* ================= Saved progress ================= */
 const PKEY = 'wm-progress';
@@ -462,17 +534,35 @@ function figF(F){
   if (F.mk >= 0){ const [x,y] = [[7,7],[83,7],[83,83],[7,83]][F.mk]; s += `<rect class="fs" x="${x}" y="${y}" width="10" height="10" rx="1.5"/>`; }
   return `<svg class="fig" viewBox="0 0 100 100" aria-hidden="true">${s}</svg>`;
 }
-const keyF = F => JSON.stringify([F.k, F.k==='circle' ? 0 : norm(F.rot||0), F.fill, F.dots, F.mk, F.in ? [F.in.k, F.in.fill, F.k==='circle' ? 0 : norm(F.in.rot ?? F.rot ?? 0)] : 0]);
+// Rotation as it looks: a square turned 90° or a star turned 72° is the same picture
+const seenRot = (k, r) => k==='circle' ? 0 : k==='arrow' ? norm(r) : norm(r) % (k==='star' ? 72 : 360/k);
+const keyF = F => JSON.stringify([F.k, seenRot(F.k, F.rot||0), F.fill, F.dots, F.mk, F.in ? [F.in.k, F.in.fill, seenRot(F.in.k, F.in.rot ?? F.rot ?? 0)] : 0]);
 const baseF = () => ({k:4, rot:0, fill:'none', dots:0, mk:-1, in:null});
 
-// Lopsided figures for flips and turns (drawn around 0,0)
+// Lopsided figures for flips and turns (drawn around 0,0). None of them looks like itself
+// after any turn or flip, so the answer never rests on the small marks alone.
 const BASES = [
-  [[-18,-30],[18,-16],[-10,-4],[-10,30],[-18,30]],
-  [[-20,-30],[-4,-30],[-4,12],[24,12],[24,28],[-20,28]],
-  [[-28,-8],[8,-8],[8,-24],[30,0],[8,24],[8,8],[-28,8]],
-  [[-26,-24],[2,-24],[2,-6],[26,-6],[26,26],[-6,26],[-6,8],[-26,8]],
-  [[-24,-28],[24,-28],[24,-12],[-6,-12],[-6,28],[-24,28]]
+  [[-22,-30],[22,-12],[-2,-2],[-2,30],[-22,30]],
+  [[-20,-30],[22,-30],[22,-14],[-2,-14],[-2,-4],[14,-4],[14,10],[-2,10],[-2,30],[-20,30]],
+  [[-28,-28],[4,-28],[4,-6],[28,-6],[28,10],[-10,10],[-10,28],[-28,28]],
+  [[-14,-30],[4,-30],[4,10],[28,10],[28,28],[-14,28]],
+  [[-26,-30],[26,-30],[26,8],[6,8],[6,-10],[-6,-10],[-6,30],[-26,30]]
 ];
+function inPoly([x,y], P){
+  let c = false;
+  for (let i=0, j=P.length-1; i<P.length; j=i++){ const [xi,yi] = P[i], [xj,yj] = P[j]; if ((yi>y) !== (yj>y) && x < (xj-xi)*(y-yi)/(yj-yi)+xi) c = !c; }
+  return c;
+}
+function edgeDist([x,y], P){
+  return Math.min(...P.map((a,i) => {
+    const b = P[(i+1) % P.length], dx = b[0]-a[0], dy = b[1]-a[1];
+    const t = Math.max(0, Math.min(1, ((x-a[0])*dx + (y-a[1])*dy) / (dx*dx + dy*dy)));
+    return Math.hypot(x - a[0] - t*dx, y - a[1] - t*dy);
+  }));
+}
+const GRID = Array.from({length:27}, (_,i) => 2*i - 26);
+const SPOTS = GRID.flatMap(x => GRID.map(y => [x,y]));
+const ROOM = {d:7, r:9};   // a dot (radius 5) or triangle (reaches 7) fits inside with clear space to the outline
 const M = {I:[1,0,0,1], R90:[0,-1,1,0], R180:[-1,0,0,-1], R270:[0,1,-1,0], MX:[-1,0,0,1], MY:[1,0,0,-1], MD:[0,1,1,0], MA:[0,-1,-1,0]};
 const DIRS = [[0,-1],[1,0],[0,1],[-1,0]];
 function triPts(d){
@@ -487,11 +577,13 @@ function gCanon(G, m){
 function makeG(lv){
   for (;;){
     const G = {base: pick(BASES), fill: pick(['none','grey']), decs: []};
-    const spots = shuffle([-20,-10,0,10,20].flatMap(x => [-20,-10,0,10,20].map(y => [x,y]))).filter(([x,y]) => Math.abs(x)+Math.abs(y) > 0);
-    G.decs.push({t:'d', x:spots[0][0], y:spots[0][1]});
-    if (lv >= 2) G.decs.push({t:'r', x:spots[1][0], y:spots[1][1], dir:rnd(4)});
-    if (lv >= 3) G.decs.push({t:'d', x:spots[2][0], y:spots[2][1]});
-    if (new Set(Object.values(M).map(m => gCanon(G, m))).size === 8) return G;
+    for (const t of ['d', 'r', 'd'].slice(0, lv)){
+      // Inside the shape, and at least 14 apart so marks never touch
+      const spot = shuffle(SPOTS).find(p => inPoly(p, G.base) && edgeDist(p, G.base) >= ROOM[t] && G.decs.every(d => Math.hypot(d.x-p[0], d.y-p[1]) >= 14));
+      if (!spot) break;
+      G.decs.push(t==='d' ? {t, x:spot[0], y:spot[1]} : {t, x:spot[0], y:spot[1], dir:rnd(4)});
+    }
+    if (G.decs.length === lv && new Set(Object.values(M).map(m => gCanon(G, m))).size === 8) return G;
   }
 }
 function gGroup(G, m, cx=50, cy=50){
@@ -511,8 +603,9 @@ function finishOpts(answerHTML, wrongHTMLs){
   const opts = shuffle([answerHTML, ...wrongHTMLs]);
   return {opts, correct: opts.indexOf(answerHTML)};
 }
-function pickDistractors(answer, pools, n=4){
-  const seen = new Set([keyF(answer)]), out = [];
+// avoid: other answers a child could defend (e.g. a mirror reading of the rule), never offered
+function pickDistractors(answer, pools, n=4, avoid=[]){
+  const seen = new Set([answer, ...avoid].map(keyF)), out = [];
   for (const pool of pools) for (const F of shuffle(pool)){
     if (out.length >= n) break;
     const k = keyF(F); if (seen.has(k)) continue;
@@ -574,11 +667,14 @@ function genSeries(lv){
     }
     return {type:'series', prompt:'Which shape comes next in the pattern?',
       stem: [0,1,2,3].map(i => cell(frame(i))).join('') + qcell,
-      opts, correct, explain: ex.join(' '), hint: `Keep an eye on ${hint.join(' and ')}.`};
+      opts, correct, explain: ex.join(' '), hint: `Keep an eye on ${hint.length > 1 ? hint.slice(0,-1).join(', ') + ' and ' + hint.at(-1) : hint[0]}.`};
   }
 }
 
-const oddFeats = F => ({k:F.k, fill:F.fill, dots:F.dots, mk:F.mk, ink:F.in?F.in.k:'-', same:F.in?String(F.in.k===F.k):'-', eq:String(F.dots===F.k), par:F.dots%2});
+// Everything a child might notice: if exactly one figure differs on any of these, it must be the answer
+const oddFeats = F => ({k:F.k, fill:F.fill, dots:F.dots, mk:F.mk, ink:F.in?F.in.k:'-', same:F.in?String(F.in.k===F.k):'-', eq:String(F.dots===F.k), par:F.dots%2,
+  hasMk:F.mk>=0, hasDots:F.dots>0, curved:F.k==='circle', star:F.k==='star', white:F.fill==='none', oddSides:typeof F.k==='number' ? F.k%2 : '-',
+  tilt:seenRot(F.k, F.rot||0)!==0, inTilt:F.in ? seenRot(F.in.k, F.in.rot ?? F.rot ?? 0)!==0 : '-'});
 function oddValid(figs, odd){
   const fs = figs.map(oddFeats); let found = false;
   for (const key of Object.keys(fs[0])) for (let i=0;i<5;i++){
@@ -618,7 +714,7 @@ function genOdd(lv){
     const ans = figF(figs[odd]);
     const {opts, correct} = finishOpts(ans, figs.filter((_,i) => i!==odd).map(figF));
     const ex = {
-      sides: `All the others are ${SHAPE_NAME[common]}s (some are turned round), but this one is a ${SHAPE_NAME[oddK]}.`,
+      sides: `All the others are ${SHAPE_NAME[common]}s, but this one is a ${SHAPE_NAME[oddK]}.`,
       innerSame: 'In the others, the small shape inside is the same kind of shape as the big one. In this one it is different.',
       dotsParity: 'The others all have an even number of dots (2, 4 or 6). This one has an odd number.',
       dotsEq: 'In the others, the number of dots matches the number of sides. In this one it doesn\'t.'
@@ -668,7 +764,8 @@ function genAnalogy(lv){
       return G;
     };
     const A = make(); let C = make(), guard = 0;
-    while ((keyF(C)===keyF(A) || C.k===A.k) && guard++ < 50) C = make();
+    while ((keyF(C)===keyF(A) || (C.k===A.k && C.k!=='arrow')) && guard++ < 50) C = make();
+    if (keyF(C)===keyF(A)) continue;
     const B = apply(A), ans = apply(C);
     const rule = [];
     for (const x of ts){
@@ -683,13 +780,22 @@ function genAnalogy(lv){
     const noise = [C];
     if (!ts.includes('fill')) noise.push(Object.assign(clone(ans), {fill: pick(FILLS.filter(f => f!==ans.fill && !(ans.in && f===ans.in.fill)))}));
     if (!ts.includes('dots')) noise.push(Object.assign(clone(ans), {dots: ans.dots+1}));
-    const wrong = pickDistractors(ans, [rule, noise]);
+    // Other readings of A→B that a child could defend: a mirror instead of a turn, doubling instead of adding
+    const avoid = [];
+    if (ts.includes('rot')) avoid.push(Object.assign(clone(ans), {rot: norm(A.rot + B.rot - C.rot)}));
+    if (ts.includes('mark')) for (const f of [[1,0,3,2],[3,2,1,0],[0,3,2,1],[2,1,0,3]])
+      if (f[A.mk] === B.mk) avoid.push(Object.assign(clone(ans), {mk: f[C.mk]}));
+    if (ts.includes('dots')){
+      if (A.dots > 0 && B.dots === 2*A.dots) avoid.push(Object.assign(clone(ans), {dots: 2*C.dots}));
+      if (B.dots > 0 && A.dots === 2*B.dots && C.dots % 2 === 0) avoid.push(Object.assign(clone(ans), {dots: C.dots/2}));
+    }
+    const wrong = pickDistractors(ans, [rule, noise], 4, avoid.filter(F => keyF(F) !== keyF(ans)));
     if (wrong.length < 4) continue;
     const {opts, correct} = finishOpts(figF(ans), wrong.map(figF));
     const say = {
       rot: p.rot===180 ? 'The arrow turns halfway round (180°).' : `The arrow turns a quarter turn ${p.rot>0?'clockwise':'anticlockwise'}.`,
       fill: `The shading changes from ${FILL_NAME[p.from]} to ${FILL_NAME[p.to]}.`,
-      swap: 'The big shape and the small shape inside swap places.',
+      swap: 'The big shape and the small shape inside swap over. The shading stays where it was.',
       side: 'The big shape gains one side.',
       dots: {1:'One dot is added.', '-1':'One dot is taken away.', 2:'Two dots are added.'}[p.dd],
       mark: {1:'The corner square moves one corner clockwise.', 2:'The corner square moves to the opposite corner.', 3:'The corner square moves one corner anticlockwise.'}[p.dm]
@@ -711,7 +817,7 @@ function genFlip(lv){
     return {type:'flip', prompt:'Which shape is the first one <b>turned round</b>? (Turned, not flipped over.)',
       stem:`<div class="cell">${figG(G, M.I)}</div>`, opts, correct,
       explain:`The answer is the shape given ${how}. The other four are mirror images: you would have to flip them over to make them match.`,
-      hint:'Turning never swaps left and right. Check which side the dot is on as you turn it.'};
+      hint:'Turning never makes a mirror image. Imagine spinning the card round on the table. Does the dot end up in the right place?'};
   }
   const v = kind==='mirrorV', ans = v ? 'MX' : 'MY';
   const others = [ 'I', v ? 'MY' : 'MX', 'R180', pick(['R90','R270','MD','MA']) ];
@@ -781,14 +887,70 @@ function makeShapeQuestions(mode, lv){
 }
 
 /* ================= Words questions ================= */
+// Every pair of words that share an entry (same or opposite meaning), across all levels
+const LINKS = {};
+for (const l in WORDS) for (const e of WORDS[l]){
+  const g = [e.w, ...e.syn, ...e.ant];
+  for (const a of g) for (const b of g) if (a !== b) (LINKS[a] ||= new Set()).add(b);
+}
+// Words on different lines that still mean the same or the opposite, so they must never appear as
+// "wrong" options next to each other. Format: word~word,word ...
+const NEAR = `angry~happy rare~scarce,unusual,plentiful,abundant,ample,ordinary,usual,normal,everyday
+regular~normal,usual,ordinary,everyday lavish~extravagant,frugal,thrifty,economical meagre~frugal
+minor~lesser paltry~trivial,unimportant,minor close~end,finish open~start,begin tough~tricky,complicated,complex
+calm~quiet,silent,gentle relaxed~quiet,gentle clear~simple,straightforward,complicated,complex
+brilliant~first-rate,superior required~crucial generous~plentiful,abundant quiet~shout,yell silent~shout,yell
+loud~whisper,murmur noisy~whisper,murmur`;
+for (const item of NEAR.split(/\s+/)){
+  const [a, bs] = item.split('~');
+  for (const b of bs.split(',')){ (LINKS[a] ||= new Set()).add(b); (LINKS[b] ||= new Set()).add(a); }
+}
+const linked = (a, b) => a === b || !!LINKS[a]?.has(b);
+// n words from pool with no link to anything in taken, or to each other
+function freeWords(pool, taken, n){
+  const out = [];
+  for (const x of shuffle(pool)){
+    if (out.length === n) break;
+    if (![...taken, ...out].some(t => linked(t, x))) out.push(x);
+  }
+  return out;
+}
+const spellable = w => /^[a-z]{4,11}$/.test(w);
+const MISS = {1:.45, 2:.55, 3:.7};   // share of letters hidden, after the first
+
+function makeGroups(e, kind, words){
+  const partner = pick(e[kind]), trap = pick(kind === 'syn' ? e.ant : e.syn);
+  const pool = [...new Set(words.filter(x => x !== e).flatMap(x => [x.w, ...x.syn, ...x.ant]))];
+  const [d1, d2, d3] = freeWords(pool, [e.w, partner, trap], 3);
+  const groups = [shuffle([e.w, d1, d2]), shuffle([partner, trap, d3])];
+  return {e, kind, partner, trap, groups: Math.random() < .5 ? groups : groups.reverse()};
+}
+function makeLetters(e, kind, l){
+  if (!e[kind].some(spellable)) kind = kind === 'syn' ? 'ant' : 'syn';
+  const answer = pick(e[kind].filter(spellable));
+  const hide = Math.max(2, Math.round((answer.length - 1) * MISS[l]));
+  const gaps = shuffle([...answer].map((_,k) => k).slice(1)).slice(0, hide).sort((a,b) => a - b);
+  return {e, kind, answer, gaps};
+}
+function makeOddOut(e){
+  const three = [e.w, ...shuffle(e.syn).slice(0,2)], two = shuffle(e.ant).slice(0,2);
+  return {e, kind:'odd', three, two, options: shuffle([...three, ...two])};
+}
+
 function makeWordQuestions(m, l){
+  if (m === 'hidden') return shuffle(HIDDEN[l]).slice(0, ROUND).map(h => ({h, kind:'hidden'}));
   const words = WORDS[l];
-  return weightedPick(words, ROUND).map(e => {
+  const pool = m === 'oddwords' ? words.filter(e => e.syn.length >= 2 && e.ant.length >= 2)
+    : m === 'letters' ? words.filter(e => [...e.syn, ...e.ant].some(spellable)) : words;
+  return weightedPick(pool, ROUND).map(e => {
     const kind = Math.random() < .5 ? 'syn' : 'ant';
     if (m === 'pair') return {e, kind, partner: pick(e[kind])};
+    if (m === 'groups') return makeGroups(e, kind, words);
+    if (m === 'letters') return makeLetters(e, kind, l);
+    if (m === 'oddwords') return makeOddOut(e);
     const correct = pick(e[kind]);
     const trap = pick(kind === 'syn' ? e.ant : e.syn);
-    const others = shuffle(words.filter(x => x.w !== e.w && !e.syn.includes(x.w) && !e.ant.includes(x.w))).slice(0,2).map(x => x.w);
+    const others = freeWords(words.map(x => x.w), [e.w, ...e.syn, ...e.ant], 2);
     return {e, kind, correct, trap, options: shuffle([correct, trap, ...others])};
   });
 }
@@ -850,6 +1012,7 @@ $('reset').addEventListener('click', () => {
 
 /* ================= Game flow ================= */
 let S = null;
+let sel = [];   // words picked so far in Pick a Pair / Odd Ones Out
 function start(subject){
   const mode = subject==='words' ? val('mode') : val('smode');
   const level = subject==='words' ? val('level') : val('slevel');
@@ -913,6 +1076,72 @@ function render(){
       <div class="toolbar"><button class="hint" id="hintBtn">Show me it in a sentence (half points)</button></div>
       <div id="fb"></div>`;
     c.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => answerMatch(b.dataset.w)));
+  } else if (S.mode === 'groups'){
+    const isSyn = q.kind === 'syn';
+    c.innerHTML = `
+      <span class="chip ${q.kind}">${isSyn ? 'Same meaning' : 'Opposite meaning'}</span>
+      <p class="ask">Pick <b>one word from each group</b> so the two words mean ${isSyn ? 'the <b>same</b>' : 'the <b>opposite</b>'}.</p>
+      <div class="groups">${q.groups.map((g,gi) => `<div class="grp" role="group" aria-label="Group ${gi+1}">${g.map(w =>
+        `<button class="opt c" data-g="${gi}" data-w="${esc(w)}" aria-pressed="false">${esc(w)}</button>`).join('')}</div>`).join('')}</div>
+      <button class="btn wide" id="check" disabled>Check</button>
+      <div class="toolbar"><button class="hint" id="hintBtn">Show me it in a sentence (half points)</button></div>
+      <div id="fb"></div>`;
+    sel = [null, null];
+    c.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => {
+      if (S.answered) return;
+      sel[+b.dataset.g] = b.dataset.w;
+      c.querySelectorAll(`.opt[data-g="${b.dataset.g}"]`).forEach(o => { o.classList.toggle('sel', o === b); o.setAttribute('aria-pressed', String(o === b)); });
+      $('check').disabled = sel.includes(null);
+    }));
+    $('check').addEventListener('click', answerGroups);
+  } else if (S.mode === 'oddwords'){
+    c.innerHTML = `
+      <span class="chip mix">Odd ones out</span>
+      <p class="ask">Three of these words go together. Tap the <b>two</b> that don't belong.</p>
+      <div class="options five">${q.options.map(o => `<button class="opt c" data-w="${esc(o)}" aria-pressed="false">${esc(o)}</button>`).join('')}</div>
+      <button class="btn wide" id="check" disabled>Check</button>
+      <div class="toolbar"><button class="hint" id="hintBtn">Show me it in a sentence (half points)</button></div>
+      <div id="fb"></div>`;
+    sel = [];
+    c.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => {
+      if (S.answered) return;
+      const w = b.dataset.w;
+      sel = sel.includes(w) ? sel.filter(x => x !== w) : [...sel, w].slice(-2);
+      c.querySelectorAll('.opt').forEach(o => { const on = sel.includes(o.dataset.w); o.classList.toggle('sel', on); o.setAttribute('aria-pressed', String(on)); });
+      $('check').disabled = sel.length < 2;
+    }));
+    $('check').addEventListener('click', answerOddOut);
+  } else if (S.mode === 'letters'){
+    const isSyn = q.kind === 'syn', n = q.gaps.length;
+    c.innerHTML = `
+      <span class="chip ${q.kind}">${isSyn ? 'Spell a synonym' : 'Spell an antonym'}</span>
+      <p class="ask">Fill in the missing letters to make a word that means ${isSyn ? 'the <b>same</b> as' : 'the <b>opposite</b> of'}</p>
+      <div class="target">${esc(q.e.w)}</div>
+      <div class="slots" id="slots" aria-hidden="true">${[...q.answer].map((ch,k) =>
+        q.gaps.includes(k) ? `<span class="slot blank"></span>` : `<span class="slot">${ch}</span>`).join('')}</div>
+      <form class="typerow" id="typeform">
+        <input class="typein" id="typein" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"
+          maxlength="${n}" placeholder="Type the ${n} missing letters" aria-label="Type the ${n} missing letters, in order">
+        <button class="btn" id="check" disabled>Check</button>
+      </form>
+      <div class="toolbar"><button class="hint" id="hintBtn" type="button">Show me it in a sentence (half points)</button></div>
+      <div id="fb"></div>`;
+    wireTyping(n, answerLetters);
+  } else if (S.mode === 'hidden'){
+    const n = q.h.h.length;
+    c.innerHTML = `
+      <span class="chip mix">Hidden word</span>
+      <p class="ask">A <b>${n}-letter word</b> is hiding across the end of one word and the start of the next. What is it?</p>
+      <p class="hsent" id="hsent">${esc(q.h.s)}</p>
+      <div class="slots" id="slots" aria-hidden="true">${'<span class="slot blank"></span>'.repeat(n)}</div>
+      <form class="typerow" id="typeform">
+        <input class="typein" id="typein" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"
+          maxlength="${n}" placeholder="Type the ${n}-letter word" aria-label="Type the hidden ${n}-letter word">
+        <button class="btn" id="check" disabled>Check</button>
+      </form>
+      <div class="toolbar"><button class="hint" id="hintBtn" type="button">Which word does it start in? (half points)</button></div>
+      <div id="fb"></div>`;
+    wireTyping(n, answerHidden);
   } else {
     c.innerHTML = `
       <span class="chip mix">Same or opposite?</span>
@@ -932,6 +1161,33 @@ function render(){
   $('hintBtn').addEventListener('click', useHint);
 }
 
+function wireTyping(n, submit){
+  const inp = $('typein'), blanks = $('qcard').querySelectorAll('.slot.blank');
+  inp.addEventListener('input', () => {
+    inp.value = inp.value.toLowerCase().replace(/[^a-z]/g, '').slice(0, n);
+    blanks.forEach((s,k) => s.textContent = inp.value[k] || '');
+    $('check').disabled = inp.value.length < n;
+  });
+  $('typeform').addEventListener('submit', ev => { ev.preventDefault(); if (inp.value.length === n) submit(); });
+  inp.focus({preventScroll:true});
+}
+
+// The sentence with the hidden word's letters highlighted
+function hiddenHTML(h){
+  const {i, k} = h.at;
+  return h.s.split(' ').map((t, j) => {
+    if (j !== i && j !== i + 1) return esc(t);
+    const L = letters(t).length, [from, to] = j === i ? [L - k, L] : [0, h.h.length - k];
+    let n = 0, on = false, out = '';
+    for (const ch of t){
+      const isL = /[a-z]/i.test(ch), want = isL && n >= from && n < to;
+      if (want !== on && (isL || on)){ out += want ? '<mark>' : '</mark>'; on = want; }
+      out += esc(ch); if (isL) n++;
+    }
+    return out + (on ? '</mark>' : '');
+  }).join(' ');
+}
+
 function useHint(){
   if (S.answered) return;
   S.hint = true;
@@ -939,6 +1195,7 @@ function useHint(){
   const q = S.qs[S.i];
   $('fb').innerHTML = S.subject==='shapes'
     ? `<div class="feedback info"><p><b>Clue:</b> ${q.hint}</p></div>`
+    : q.h ? `<div class="feedback info"><p><b>Clue:</b> it starts in the word <b>${esc(q.h.s.split(' ')[q.h.at.i])}</b>.</p></div>`
     : `<div class="feedback info"><p class="sentence">${sentenceHTML(q.e)}</p></div>`;
 }
 
@@ -947,9 +1204,12 @@ function record(ok){
   S.results[S.i] = ok;
   if (ok){ S.score += S.hint ? 5 : 10; S.streak++; S.bestStreak = Math.max(S.bestStreak, S.streak); }
   else S.streak = 0;
+  const e = S.qs[S.i].e;
   if (S.subject==='words'){
-    const ws = P.words[S.qs[S.i].e.w] ||= {c:0, r:0, w:0};
-    if (ok){ ws.c++; ws.r++; } else { ws.c = 0; ws.w++; }
+    if (e){   // Hidden Words has no headword to master
+      const ws = P.words[e.w] ||= {c:0, r:0, w:0};
+      if (ok){ ws.c++; ws.r++; } else { ws.c = 0; ws.w++; }
+    }
   } else {
     P.shapes.tried++; if (ok) P.shapes.solved++;
   }
@@ -1007,6 +1267,57 @@ function answerPair(k){
   showFeedback(ok, ok ? pick(CHEERS) : 'Not quite', `<p>${truth}</p>${wordExtras(e)}`);
 }
 
+function lockPicks(good){
+  $('check').disabled = true;
+  $('qcard').querySelectorAll('.opt').forEach(b => {
+    b.disabled = true; b.classList.remove('sel');
+    const w = b.dataset.w;
+    b.classList.add(good.includes(w) ? 'right' : sel.includes(w) ? 'wrong' : 'fade');
+  });
+}
+
+function answerGroups(){
+  if (S.answered || sel.includes(null)) return;
+  const q = S.qs[S.i], e = q.e, ok = sel.includes(e.w) && sel.includes(q.partner);
+  record(ok);
+  lockPicks([e.w, q.partner]);
+  const rel = q.kind === 'syn' ? 'mean the same' : 'mean the opposite';
+  let body = `<b>${esc(e.w)}</b> and <b>${esc(q.partner)}</b> ${rel}.`;
+  if (!ok && sel.includes(e.w) && sel.includes(q.trap))
+    body = `<b>${esc(q.trap)}</b> is a sneaky one: it means the ${q.kind === 'syn' ? '<b>opposite</b>' : '<b>same</b>'} of <b>${esc(e.w)}</b>. ${body}`;
+  else if (!ok) body = `<b>${esc(sel[0])}</b> and <b>${esc(sel[1])}</b> aren't linked. ${body}`;
+  showFeedback(ok, ok ? pick(CHEERS) : 'Not quite', `<p>${body}</p>${wordExtras(e)}`);
+}
+
+function answerOddOut(){
+  if (S.answered || sel.length < 2) return;
+  const q = S.qs[S.i], e = q.e, ok = sel.every(w => q.two.includes(w));
+  record(ok);
+  lockPicks(q.two);
+  const list = a => a.slice(0,-1).map(w => `<b>${esc(w)}</b>`).join(', ') + ` and <b>${esc(a.at(-1))}</b>`;
+  const body = `${list(q.three)} all mean the same. ${list(q.two)} mean the opposite, so they're the odd ones out.`;
+  showFeedback(ok, ok ? pick(CHEERS) : 'Not quite', `<p>${body}</p>${wordExtras(e)}`);
+}
+
+function answerLetters(){
+  if (S.answered) return;
+  const q = S.qs[S.i], e = q.e, typed = $('typein').value;
+  const word = [...q.answer].map((ch,k) => { const g = q.gaps.indexOf(k); return g < 0 ? ch : typed[g]; }).join('');
+  const ok = e[q.kind].includes(word);
+  record(ok);
+  $('typein').disabled = true; $('check').disabled = true;
+  const fix = ok ? word : q.answer;
+  $('qcard').querySelectorAll('.slot').forEach((s,k) => {
+    if (!q.gaps.includes(k)) return;
+    s.textContent = fix[k];
+    s.classList.add(ok || word[k] === fix[k] ? 'right' : 'wrong');
+  });
+  const rel = q.kind === 'syn' ? 'means the same as' : 'means the opposite of';
+  const body = ok ? `<b>${esc(word)}</b> ${rel} <b>${esc(e.w)}</b>.`
+    : `You spelt <b>${esc(word)}</b>. The word was <b>${esc(q.answer)}</b>, which ${rel} <b>${esc(e.w)}</b>.`;
+  showFeedback(ok, ok ? pick(CHEERS) : 'Not quite', `<p>${body}</p>${wordExtras(e)}`);
+}
+
 function answerShape(i){
   if (S.answered) return;
   const q = S.qs[S.i], ok = i === q.correct;
@@ -1018,6 +1329,18 @@ function answerShape(i){
     else b.classList.add('fade');
   });
   showFeedback(ok, ok ? pick(CHEERS) : `Not quite. It was ${'abcde'[q.correct]}.`, `<p>${q.explain}</p>`);
+}
+
+function answerHidden(){
+  if (S.answered) return;
+  const q = S.qs[S.i], h = q.h, typed = $('typein').value, ok = typed === h.h;
+  record(ok);
+  $('typein').disabled = true; $('check').disabled = true;
+  $('qcard').querySelectorAll('.slot').forEach((s,k) => { s.textContent = h.h[k]; s.classList.add(typed[k] === h.h[k] ? 'right' : 'wrong'); });
+  $('hsent').innerHTML = hiddenHTML(h);
+  const body = ok ? `<b>${esc(h.h)}</b> was hiding in the sentence.`
+    : `You wrote <b>${esc(typed)}</b>. The hidden word was <b>${esc(h.h)}</b>.`;
+  showFeedback(ok, ok ? pick(CHEERS) : 'Not quite', `<p>${body}</p><p class="sentence">${hiddenHTML(h)}</p>`);
 }
 
 function next(){
@@ -1048,7 +1371,10 @@ function finish(){
   const starSVG = on => `<svg class="star ${on ? 'on' : ''}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg>`;
   let review = '';
   if (S.subject === 'words'){
-    const missed = S.qs.filter((q,k) => S.results[k] === false).map(q => q.e);
+    const missedH = S.qs.filter((q,k) => S.results[k] === false && q.h).map(q => q.h);
+    if (missedH.length) review = `<div class="review"><span class="label">Sentences to look at again</span>${missedH.map(h => `
+      <div class="rv one"><span class="hw">${esc(h.h)}</span><span class="sentence">${hiddenHTML(h)}</span></div>`).join('')}</div>`;
+    const missed = S.qs.filter((q,k) => S.results[k] === false && q.e).map(q => q.e);
     if (missed.length) review = `<div class="review"><span class="label">Words to practise</span>${missed.map(e => `
       <div class="rv"><span class="hw">${esc(e.w)}</span><span><span class="s">Same:</span> ${e.syn.map(esc).join(', ')}</span><span><span class="a">Opposite:</span> ${e.ant.map(esc).join(', ')}</span></div>`).join('')}</div>`;
   } else {
